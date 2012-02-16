@@ -70,6 +70,7 @@ class Octnode {
         bool is_outside()   { return (state==OUTSIDE); }
         /// is this node undecided?
         bool is_undecided() { return (state==UNDECIDED); }
+        bool contains( const Volume* vol );
         
         /// return true if all children of this node in given state s
         bool all_child_state(NodeState s) const;
@@ -135,6 +136,8 @@ class Octnode {
         /// string output
         std::string type() const;
         
+        /// set node to undecided
+        void setUndecided();
     protected: 
         /// based on the f[]-values at the corners of this node, set the state to one of inside, outside, or undecided.
         void set_state();
@@ -142,8 +145,7 @@ class Octnode {
         void setInside();
         /// set node to outside
         void setOutside();
-        /// set node to undecided
-        void setUndecided();
+
         /// set given child valid
         void setChildValid( unsigned int id );
         /// set the given child to invalid

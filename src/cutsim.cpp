@@ -25,21 +25,14 @@ Cutsim::Cutsim (double octree_size, unsigned int octree_max_depth, GLData* gld, 
     : iso_algo(iso), g(gld) {
     GLVertex octree_center(0,0,0);
     tree = new Octree(octree_size, octree_max_depth, octree_center, g );
-    //std::cout << "Cutsim() ctor: tree before init: " << tree->str() << "\n";
-    //tree->init(2u);
     tree->debug=false;
-    //std::cout << "Cutsim() ctor: tree after init: " << tree->str() << "\n";
     iso_algo->set_gl(g);
     iso_algo->set_tree(tree);
     iso_algo->set_polyVerts();
-    // iso_algo = new MarchingCubes(g, tree);
-    //iso_algo = new CubeWireFrame(g, tree);    
 } 
 
 Cutsim::~Cutsim() {
-    //delete iso_algo;
     delete tree;
-    //delete g;
 }
 
 void Cutsim::init(unsigned int n) {
@@ -56,9 +49,8 @@ void Cutsim::updateGL() {
     std::clock_t start, stop;
     start = std::clock();
     iso_algo->updateGL();
-    //g->swap();
     stop = std::clock();
-    std::cout << "cutsim.cpp updateGL() : " << ( ( stop - start ) / (double)CLOCKS_PER_SEC ) <<'\n';
+    std::cout << "cutsim.cpp updateGL() : " << ( ( stop - start ) / (double)CLOCKS_PER_SEC ) <<"\n";
 }
 
 void Cutsim::sum_volume( const Volume* volume ) {
@@ -66,7 +58,7 @@ void Cutsim::sum_volume( const Volume* volume ) {
     start = std::clock();
     tree->sum( volume );
     stop = std::clock();
-    std::cout << "Cutsim::sum_volume()  :" << ( ( stop - start ) / (double)CLOCKS_PER_SEC ) <<' s\n';
+    std::cout << "Cutsim::sum_volume()  :" << ( ( stop - start ) / (double)CLOCKS_PER_SEC ) <<" s\n";
 }
 
 void Cutsim::diff_volume( const Volume* volume ) {
@@ -74,7 +66,7 @@ void Cutsim::diff_volume( const Volume* volume ) {
     start = std::clock();
     tree->diff( volume );
     stop = std::clock();
-    std::cout << "cutsim.cpp diff_volume()  :" << ( ( stop - start ) / (double)CLOCKS_PER_SEC ) <<'\n';
+    std::cout << "cutsim.cpp diff_volume()  :" << ( ( stop - start ) / (double)CLOCKS_PER_SEC ) <<"\n";
 }
 
 void Cutsim::intersect_volume( const Volume* volume ) {

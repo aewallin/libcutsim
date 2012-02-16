@@ -1,5 +1,6 @@
 import libcutsim
 import myvtk
+import math
 
 # draw triangles from GLData
 def drawTriangles(myscreen, gl):
@@ -13,31 +14,39 @@ def drawTriangles(myscreen, gl):
     
     # this draws all triangles with the same color
     triactor = myvtk.STLSurf(triangleList=trianglelist, color=myvtk.cyan)
-    #triactor.SetWireframe()
+    triactor.SetWireframe()
     myscreen.addActor(triactor)
     
 def main():
     
     gl = libcutsim.GLData()  # this class holds lines, triangles, or quads for OpenGL drawing
     iso = libcutsim.MarchingCubes() # this is the algorithm that produces GLData from the stock-model
-    cs = libcutsim.Cutsim(10.0, 8, gl, iso) # this is the cutting simulation
+    cs = libcutsim.Cutsim(20.0, 9, gl, iso) # this is the cutting simulation
     print cs
 
-    cs.init(3) # initialize by subdividing octree n-times
+    cs.init(6) # initialize by subdividing octree n-times
     print cs
 
-    vol = libcutsim.SphereVolume() # a volume with which we operate on the stock
-    vol.setRadius(4)
-    vol.setCenter(0,0,0)
+    vol = libcutsim.CubeVolume() # a volume with which we operate on the stock
+    vol.setSide(10)
+    vol.setCenter(0,0,-5)
 
     cs.sum_volume(vol) # sum the volume to the stock, creating new material
     
-    # resize and position the sphere for a cut
-    vol.setRadius(1)
-    vol.setCenter(0,4,0)
-    cs.diff_volume(vol) # subtract the volume from the stock
+    # the volume with which we cut
     
-    cs.updateGL() # this updates the GLData so we can draw the stock
+    cutter = libcutsim.SphereVolume()
+    cutter.setRadius(float(0.7))
+    # move around the cutter and subtract at each point
+    for n in range(100):
+        x = 3*math.cos(0.1*n)
+        y = -3 + 0.08*n
+        print x,y
+        cutter.setCenter(x,y,0.1)
+        cs.diff_volume(cutter) # subtract the volume from the stock
+        
+    cs.updateGL()
+    # this updates the GLData so we can draw the stock
     
     print cs
     print gl

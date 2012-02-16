@@ -36,8 +36,8 @@ SphereVolume::SphereVolume() {
     calcBB();
 }
 
-double SphereVolume::dist(const GLVertex& p ) const {
-    double d = (center-p).norm();
+float SphereVolume::dist(const GLVertex& p ) const {
+    float d = (center-p).norm();
     return radius-d; // positive inside. negative outside.
 }
 
@@ -52,6 +52,7 @@ void SphereVolume::calcBB() {
 
 //************* Rectangle **************/
 
+/*
 RectVolume::RectVolume() {
     corner = GLVertex(0,0,0); 
     v1 = GLVertex(1,0,0); 
@@ -152,23 +153,13 @@ double RectVolume::dist(const GLVertex& p) const {
         dOut = sqrt((min_y - p.y)*(min_y - p.y)+(min_z - p.z)*(min_z - p.z));
         
     return -dOut;
-}
-/*
-bool SphereVolume::isInside(GLVertex& p) const {
-    std::cout << " isInside !!! \n";
-    if (!isInsideBB(p))
-        return false;
-    
-    if ( (center-p).norm() <= radius ) 
-        return true;
-    else
-        return false;
 }*/
+
 
 
 //************* Cube **************/
 
-/*
+
 /// cube at center with side length side
 CubeVolume::CubeVolume() {
     center = GLVertex(0,0,0);
@@ -184,8 +175,8 @@ void CubeVolume::calcBB() {
     bb.addPoint( minpt );
 }
 
-double CubeVolume::dist(GLVertex& p) const {
-    double m;
+float CubeVolume::dist(const GLVertex& p ) const {
+    float m;
     m = p.x-center.x;
     
     if ( fabs(m) < fabs(p.y-center.y) ) 
@@ -193,11 +184,10 @@ double CubeVolume::dist(GLVertex& p) const {
     if (fabs(m) < fabs(p.z-center.z) )
         m = p.z-center.z;
     // m is now the maximum coordinate
-    bool sign = (invert ? -1.0 : 1.0 );
-    return -(sign)*( fabs(m)- side/2.0);
-    
-    //return 0;
-}*/
+    //bool sign = (invert ? -1.0 : 1.0 );
+    return ( side/2.0 - fabs(m) );
+    // positive inside. negative outside.
+}
 
 /*
 bool CubeVolume::isInside(GLVertex& p) const

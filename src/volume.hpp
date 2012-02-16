@@ -57,7 +57,7 @@ public:
     /// return signed distance from volume surface to Point p
     /// Points p inside the volume should return positive values.
     /// Points p outside the volume should return negative values.
-    virtual double dist(const GLVertex& p) const {return 0;}
+    virtual float dist(const GLVertex& p) const {return 0;}
     /// set the color
     void setColor(float r, float g, float b) {
         color.r=r; color.g=g; color.b=b;
@@ -68,6 +68,7 @@ public:
     Bbox bb;
     /// the color of this Volume
     Color color;
+    GLVertex center;
 };
 
 // sub-classes of Volume below:
@@ -89,10 +90,10 @@ class SphereVolume: public Volume {
         }
         /// update the Bbox
         void calcBB();
-        double dist(const GLVertex& p) const;
-        
+        virtual float dist(const GLVertex& p) const;
+
         /// center Point of sphere
-        GLVertex center;
+        //GLVertex center;
         /// radius of sphere
         double radius;
 };
@@ -101,10 +102,21 @@ class SphereVolume: public Volume {
 /// from corner, go out in the three directions v1,v2,v3
 /// interior points = corner + a*v1 + b*v2 + c*v3  
 /// where a, b, c are in [0,1]
+/*
 class RectVolume : public Volume {
     public:
         /// default constructor
         RectVolume();
+        void set_corner(float x, float y, float z) {
+            corner.x = x;
+            corner.y = y;
+            corner.z = z;
+        }
+        void set_dimensions(float l, float w, float h) {
+            v1 = GLVertex(l,0,0); 
+            v2 = GLVertex(0,w,0);
+            v3 = GLVertex(0,0,h);
+        }
         /// one corner of the box
         GLVertex corner;
         /// first vector from corner, to span the box
@@ -116,16 +128,26 @@ class RectVolume : public Volume {
         /// update the bounding-box
         void calcBB();
         double dist(const GLVertex& p) const;
-};
+};*/
 
-/*
+
 /// cube at center with side-length side
-class CubeVolume: public OCTVolume {
+class CubeVolume: public Volume {
     public:
         /// default constructor
         CubeVolume();
+        virtual float dist(const GLVertex& p) const;
+        void setSide(double s) {
+            side=s;
+            calcBB();
+        }
+        /// set the centerpoint of the sphere
+        void setCenter(float x, float y, float z) {
+            center = GLVertex(x,y,z);
+            calcBB();
+        }
         /// center point of cube
-        GLVertex center;
+        //GLVertex center;
         /// side length of cube
         double side;
        // bool isInside(GLVertex& p) const;
@@ -133,7 +155,7 @@ class CubeVolume: public OCTVolume {
         void calcBB();
         double dist(GLVertex& p) const;
 };
-*/
+
 
 
 /// cylinder volume

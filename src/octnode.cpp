@@ -87,7 +87,7 @@ Octnode::Octnode(Octnode* nodeparent, unsigned int index, double nodescale, unsi
 
     
     for ( int n=0;n<8;++n) {
-		child[n] = NULL;
+        child[n] = NULL;
         vertex[n] = new GLVertex(*center + direction[n] * scale ) ;
         if (parent) {
             assert( parent->state == UNDECIDED );
@@ -140,6 +140,9 @@ GLVertex* Octnode::childcenter(int n) {
     return  new GLVertex(*center + ( direction[n] * 0.5*scale ));
 }
 
+bool Octnode::contains( const Volume* vol ) {
+    return true;
+}
 
 // create the 8 children of this node
 void Octnode::subdivide() {
@@ -148,6 +151,7 @@ void Octnode::subdivide() {
             std::cout << " subdivide() error: state==" << state << "\n";
             
         assert( state == UNDECIDED );
+        
         for( int n=0;n<8;++n ) {
             Octnode* newnode = new Octnode( this, n , scale/2.0 , depth+1 , g); // parent,  idx, scale,   depth, GLdata
             this->child[n] = newnode;
@@ -158,7 +162,7 @@ void Octnode::subdivide() {
         assert(0); 
     }
 }
-
+// A union B = max( d(A), d(B) )
 void Octnode::sum(const Volume* vol) {
     for ( int n=0;n<8;++n) {
         if (vol->dist( *(vertex[n]) ) > f[n])
@@ -167,6 +171,7 @@ void Octnode::sum(const Volume* vol) {
     }
     set_state();
 }
+// A \ B = min( d(A), -d(B)
 void Octnode::diff(const Volume* vol) {
     for ( int n=0;n<8;++n)  {
         if (-1*vol->dist( *(vertex[n]) ) < f[n])
@@ -175,6 +180,7 @@ void Octnode::diff(const Volume* vol) {
     }
     set_state();
 }
+// A intersect B = min( d(A), d(B) )
 void Octnode::intersect(const Volume* vol) {
     for ( int n=0;n<8;++n) {
         if (vol->dist( *(vertex[n]) ) < f[n])

@@ -83,7 +83,7 @@ void Octree::get_invalid_leaf_nodes(Octnode* current, std::vector<Octnode*>& nod
         if ( !current->valid() ) {
             nodelist.push_back( current );
         }
-    } else {//surface()surface()
+    } else {
         for ( int n=0;n<8;++n) {
             if ( current->hasChild(n) ) {
                 if ( !current->valid() ) {
@@ -144,16 +144,21 @@ void Octree::sum(Octnode* current, const Volume* vol) {
 
 
 void Octree::diff(Octnode* current, const Volume* vol) {
-    if (  !vol->bb.overlaps( current->bb ) || current->is_outside() ) // if no overlap, or already OUTSIDE, then quit.
-        return;   
+    if ( !vol->bb.overlaps( current->bb ) || current->is_outside() ) {
+        //std::cout << vol->center.x << "," << vol->center.y << "," << vol->center.z << " overlaps? " << vol->bb.overlaps( current->bb ) << "\n";
+        return;  // if no overlap, or already OUTSIDE, then quit.  
+    }
     
     current->diff(vol);
-    if ( ((current->childcount) == 8) && current->is_undecided() ) { // recurse into existing tree
+    if (current->contains(vol))
+        current->setUndecided();
+        
+    if ( ((current->childcount) == 8) && (current->is_undecided()  ) ) { // recurse into existing tree
         for(int m=0;m<8;++m) {
             //if ( !current->child[m]->is_outside()  ) // nodes that are OUTSIDE don't change
                 diff( current->child[m], vol); // call diff on children
         }
-    } else if (  current->is_undecided() ) { // no children, subdivide if undecided 
+    } else if ( (current->is_undecided() )  ) { // no children, subdivide if undecided 
         if ( (current->depth < (this->max_depth-1)) ) {
             current->subdivide(); // smash into 8 sub-pieces
             for(int m=0;m<8;++m) {
@@ -162,9 +167,11 @@ void Octree::diff(Octnode* current, const Volume* vol) {
         }
     }
     // now all children have their status set, prune.
+    
+    /*
     if ( (current->childcount == 8) && ( current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE) ) ) {
         current->delete_children();
-    }
+    }*/
 }
 
 void Octree::intersect(Octnode* current, const Volume* vol) {
