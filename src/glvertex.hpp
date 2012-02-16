@@ -170,72 +170,7 @@ struct GLVertex {
     float dot(const GLVertex &p) const {
         return x*p.x + y*p.y + z*p.z;
     }
-    
-    /// the closest point on p1-p2 line
-    /*
-    GLVertex closestPoint(const GLVertex &p1, const GLVertex &p2) const {
-        GLVertex v = p2 - p1;
-        assert( v.norm() > 0.0 );
-        double u = (*this - p1).dot(v) / v.dot(v);  // u = (p3-p1) dot v / (v dot v)
-        return p1 + v*u;
-    }*/
-    
-    /// distance from this vertex to p1-p2 line, in the XY plane (used??)
-    /*
-    float xyDistanceToLine(const GLVertex &p1, const GLVertex &p2) const {
-        // see for example
-        // http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
-        if ((p1.x == p2.x) && (p1.y == p2.y)) {// no line in xy plane
-            std::cout << "point.cpp: xyDistanceToLine ERROR!: can't calculate distance from \n";
-            //std::cout << "point.cpp: xyDistanceToLine ERROR!: *this ="<<*this <<" to line through\n";
-            //std::cout << "point.cpp: xyDistanceToLine ERROR!: p1="<<p1<<" and \n";
-            //std::cout << "point.cpp: xyDistanceToLine ERROR!: p2="<<p2<< "\n";
-            //std::cout << "point.cpp: xyDistanceToLine ERROR!: in the xy-plane\n";
-            return -1;
-        }
-        else {
-            GLVertex v( p2.y-p1.y, -(p2.x-p1.x), 0 );
-            v.normalize();
-            GLVertex r(p1.x - x, p1.y - y, 0);
-            return fabs( v.dot(r));
-        }
-    }*/
-    
-    /// rotate vertex by amount alfa around o->v axis 
-    /*
-    void rotate(const GLVertex& origin, const GLVertex& v, float alfa) {
-        // rotate point p by alfa deg/rad around vector o->v
-        // p = o + M*(p-o)
-        float M[3][3];
-        float c = cos(alfa);
-        float D = 1.0 - c;
-        float s = sin(alfa);
-        M[0][0] = v.x*v.x*D+c; 
-        M[0][1] = v.y*v.x*D+v.z*s; 
-        M[0][2] = v.z*v.x*D-v.y*s;
-        M[1][0] = v.x*v.y*D-v.z*s;
-        M[1][1] = v.y*v.y*D+c;
-        M[1][2] = v.z*v.y*D+v.x*s;
-        M[2][0] = v.x*v.z*D+v.y*s;
-        M[2][1] = v.y*v.z*D-v.x*s;
-        M[2][2] = v.z*v.z*D+c;
-        // matrix multiply
-        float vector[3];
-        vector[0] = x - origin.x;
-        vector[1] = y - origin.y;
-        vector[2] = z - origin.z;
-        float result[3];
-        for (int i=0; i < 3; i++) {
-            result[i]=0;
-            for (int j=0; j < 3; j++) {
-                result[i]+=vector[j]*M[i][j];
-            }
-        }
-        x = origin.x + result[0];
-        y = origin.y + result[1];
-        z = origin.z + result[2];
-    }*/
-    
+
 };
 
 } // end namespace

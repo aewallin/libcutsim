@@ -27,15 +27,19 @@ void MarchingCubes::updateGL(Octnode* node) {
         return;
     
     if ( node->is_undecided() && node->isLeaf() ) {
+        assert( !node->valid() );
+        node->clearVertexSet();
         mc_node(node);
         node->setValid();
     }
-    
+
     // current node done, now recurse into tree.
     if ( node->childcount == 8 ) {
         for (unsigned int m=0;m<8;m++) {
-                if (!node->child[m]->valid())
+                if (!node->child[m]->valid()) {
+                    node->clearVertexSet();
                     updateGL( node->child[m] );
+                }
         }
     }
 }

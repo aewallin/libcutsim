@@ -51,14 +51,16 @@ protected:
     /// update the GLData for the given Octnode. re-implement in sub-class
     virtual void updateGL( Octnode* node) {}
     /// when the given Octnode is deleted all associated GLData vertices are removed here.
+    /*
     void remove_node_vertices(Octnode* current ) {
+        exit(-1);
         while( !current->vertexSetEmpty() ) {
             unsigned int delId = current->vertexSetTop();
             current->removeIndex( delId );
             g->removeVertex( delId );
         }
         assert( current->vertexSetEmpty() ); // when done, set should be empty
-    }
+    }*/
     
     /// count the valid/invalid nodes, for debugging
     /*

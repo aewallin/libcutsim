@@ -245,6 +245,7 @@ void Octnode::setUndecided() {
     if (state != UNDECIDED) {
         prev_state = state;
         state = UNDECIDED;
+        setInvalid();
     }
 }
 
@@ -293,12 +294,6 @@ void Octnode::delete_children() {
     }
     
 }
-                    
-
-
-
-
-
 
 void Octnode::setValid() {
     isosurface_valid = true;

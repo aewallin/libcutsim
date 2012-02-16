@@ -58,19 +58,21 @@ class Octnode {
             setUndecided();
             subdivide();
         }
+    // BOOLEAN OPS
         /// sum Volume to this node
         void sum(const Volume* vol);
         /// diff Volume from this node
         void diff(const Volume* vol);
         /// intersect this node with given Volume
         void intersect(const Volume* vol);
+        
         /// is this node outside?
         bool is_inside()    { return (state==INSIDE); }
         /// is this node outside?
         bool is_outside()   { return (state==OUTSIDE); }
         /// is this node undecided?
         bool is_undecided() { return (state==UNDECIDED); }
-        //bool contains( const Volume* vol );
+
         
         /// return true if all children of this node in given state s
         bool all_child_state(NodeState s) const;

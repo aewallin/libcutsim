@@ -1,6 +1,7 @@
 import libcutsim
 import myvtk
 import math
+import time
 
 # draw triangles from GLData
 def drawTriangles(myscreen, gl):
@@ -37,13 +38,17 @@ def main():
     cutter = libcutsim.SphereVolume()
     cutter.setRadius(float(0.7))
     # move around the cutter and subtract at each point
-    for n in range(100):
+    t_before = time.time()
+    Nmax = 100
+    for n in range(Nmax):
         x = 3*math.cos(0.1*n)
         y = -3 + 0.08*n
         #print x,y
         cutter.setCenter(x,y,0.1)
         cs.diff_volume(cutter) # subtract the volume from the stock
-        
+        cs.updateGL()
+    t_after = time.time()
+    print Nmax, " diff() calls took ", t_after-t_before," seconds"
     cs.updateGL()
     # this updates the GLData so we can draw the stock
     
