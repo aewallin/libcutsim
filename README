@@ -2,6 +2,7 @@
 $ git clone git://github.com/aewallin/libcutsim.git
 $ cd libcutsim
 $ mkdir build
+$ cd build
 $ cmake ../src
 $ make
 $ sudo make install
