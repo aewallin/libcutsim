@@ -1,0 +1,10 @@
+
+$ git clone git://github.com/aewallin/libcutsim.git
+$ cd libcutsim
+$ mkdir build
+$ cmake ../src
+$ make
+$ sudo make install
+use !
+
+check py/ for examples 
