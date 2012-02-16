@@ -25,30 +25,25 @@ namespace cutsim {
 
 /// axis-aligned bounding-box, stores max and min x,y,z coordinates
 /// in points minpt and maxpt and provides methods for clearing ad setting these
+///
+/// for rapid overlap-checking of Volume with Octnode
 class Bbox {
 public:
-    /// default ctor;
     Bbox();
     /// create box 
     Bbox(double minx, double maxx, double miny, double maxy, double minz, double maxz);
     virtual ~Bbox() {};
-    /// index into maxpt and minpt returning a vector
-    /// [minx maxx miny maxy minz maxz]
-    double operator[](const unsigned int idx) const;        
-    /// return true if Point p is inside this Bbox
-    bool isInside(GLVertex& p) const;
+
     /// return true if *this overlaps Bbox b
     bool overlaps(const Bbox& other) const;
     
-    //bool contains( const Bbox& other ) const;
     
     /// reset the Bbox (sets initialized=false)
     void clear();
     /// Add a Point to the Bbox.
     /// This enlarges the Bbox so that p is contained within it.
     void addPoint(const GLVertex& p);
-    /// string output
-    friend std::ostream &operator<<(std::ostream& stream, const Bbox b);
+
 //DATA
     /// the maximum point
     GLVertex maxpt; 

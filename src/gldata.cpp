@@ -31,16 +31,7 @@
 namespace cutsim {
 
 GLData::GLData() {
-    // some reasonable defaults...
-    //renderIndex = 0;
-    //workIndex = 1;
-    
-    //glp.type = GL_TRIANGLES;
     polyVerts = 3;
-    //glp.polygonMode_face = GL_FRONT_AND_BACK;
-    //glp.polygonMode_mode = GL_LINE;
-    
-    //swap(); // to intialize glp etc.. (?)
 }
 
 /// add a vertex with given position and color, return its index
@@ -107,7 +98,6 @@ void GLData::removeVertex( unsigned int vertexIdx ) {
     vertexArray.resize( vertexArray.size()-1 );
     vertexDataArray.resize( vertexDataArray.size()-1 );
     assert( vertexArray.size() == vertexDataArray.size() );
-    //std::cout << " removeVertex done.\n";
 }
 
 /// add a polygon, return its index
@@ -145,35 +135,11 @@ void GLData::removePolygon( unsigned int polygonIdx) {
 
 /// string output
 std::string GLData::str() {
-    //std::string out;
-    //out += "GLData ";
-    //out += int2str( vertexArray.size() );
-    //out += " vertices ";
-    
     std::string s;
     std::stringstream out;
     out << "GLData(" << polyVerts << ") " << vertexArray.size() << " vertices and " << indexArray.size() << " indices.";
     s = out.str();
     return s;
-    /*
-    //int n = 0;
-    for( unsigned int n = 0; n < vertexArray.size(); ++n ) {
-        std::cout << n << " : ";
-        vertexArray[n].str();
-        std::cout << " polys: "; 
-        //vertexDataArray[n].str();
-        std::cout << "\n";
-    }
-    std::cout << "GLData polygons: \n";
-    int polygonIndex = 0;
-    for( unsigned int n=0; n< indexArray.size(); n=n+polygonVertices() ) {
-        std::cout << polygonIndex << " : ";
-        for (int m=0;m<polygonVertices() ;++m)
-            std::cout << indexArray[n+m] << " "; 
-        std::cout << "\n";
-        ++polygonIndex;
-    }*/
-    //return out;
 }
 
 

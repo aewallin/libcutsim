@@ -38,10 +38,7 @@ namespace cutsim {
 class MarchingCubes : public IsoSurfaceAlgorithm {
 public:
     /// create algorithm
-    MarchingCubes() : IsoSurfaceAlgorithm() {
-        //g->setTriangles(); 
-        //g->setPolygonModeFill(); 
-    }
+    MarchingCubes() : IsoSurfaceAlgorithm() {}
     virtual void set_polyVerts(unsigned int ) { g->setTriangles(); }
     virtual ~MarchingCubes() { }
 protected:

@@ -172,13 +172,16 @@ struct GLVertex {
     }
     
     /// the closest point on p1-p2 line
+    /*
     GLVertex closestPoint(const GLVertex &p1, const GLVertex &p2) const {
         GLVertex v = p2 - p1;
         assert( v.norm() > 0.0 );
         double u = (*this - p1).dot(v) / v.dot(v);  // u = (p3-p1) dot v / (v dot v)
         return p1 + v*u;
-    }
+    }*/
+    
     /// distance from this vertex to p1-p2 line, in the XY plane (used??)
+    /*
     float xyDistanceToLine(const GLVertex &p1, const GLVertex &p2) const {
         // see for example
         // http://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
@@ -196,9 +199,10 @@ struct GLVertex {
             GLVertex r(p1.x - x, p1.y - y, 0);
             return fabs( v.dot(r));
         }
-    }
+    }*/
     
     /// rotate vertex by amount alfa around o->v axis 
+    /*
     void rotate(const GLVertex& origin, const GLVertex& v, float alfa) {
         // rotate point p by alfa deg/rad around vector o->v
         // p = o + M*(p-o)
@@ -230,7 +234,7 @@ struct GLVertex {
         x = origin.x + result[0];
         y = origin.y + result[1];
         z = origin.z + result[2];
-    }
+    }*/
     
 };
 

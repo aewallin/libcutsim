@@ -146,27 +146,20 @@ public:
 
     /// length of indexArray
     inline const int indexCount() const { return indexArray.size(); }
-    
-
 
 protected:
-    /// set type for GL-rendering, e.g. GL_TRIANGLES, GL_QUADS, etc.
-    //void setType(GLenum t) { glp.type = t; }
-// data. double buffered. rendering uses [renderIndex], worker-task uses [workIndex]
     /// vertex coordinates
-    //QVarLengthArray<GLVertex>    vertexArray;
     std::vector<GLVertex>    vertexArray;
-    /// non-OpenGL data associated with vertices. This correspoinds allways to the workIndex.
-    /// only one array, since not needed for OpenGL drawing!
-    //QVarLengthArray<VertexData>  vertexDataArray; 
+    
+    /// non-OpenGL data associated with vertices. 
     std::vector<VertexData>  vertexDataArray; 
+    
     /// polygon indices
     std::vector<unsigned int>      indexArray;
-    /// parameters for rendering this GLData
-    //GLParameters glp;
-    int polyVerts;
-    bool triangles;
-    bool lines;
+    
+    int polyVerts; // number of vertices per polygon. 3 for triangles, 4 for quads.
+    bool triangles; // GLData should be drawn as triangles
+    bool lines; // GLData should be drawn as lines
 };
 
 } // end namespace

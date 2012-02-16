@@ -2,7 +2,7 @@ import libcutsim
 
 
 gl = libcutsim.GLData()
-iso = libcutsim.MarchingCubes()
+iso = libcutsim.MarchingCubes() # ONLY MarchingCubes works for now !!
 
 cs = libcutsim.Cutsim(10.0, 5, gl, iso)
 print cs

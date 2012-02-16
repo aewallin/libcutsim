@@ -45,14 +45,7 @@ public:
     // return polygons corresponding to the octree node
     /// update GLData
     virtual void updateGL() { 
-        //update_calls=0;
-        //valid_count=0;
-        //debugValid();
         updateGL( tree->root );
-        //debugValid();
-        
-        //std::cout << update_calls << " calls made\n";
-        //std::cout << valid_count << " valid_nodes\n";
     }
 protected:
     /// update the GLData for the given Octnode. re-implement in sub-class
@@ -68,6 +61,7 @@ protected:
     }
     
     /// count the valid/invalid nodes, for debugging
+    /*
     void debugValid() {
         std::vector<Octnode*> nodelist; // = new std::vector<Octnode*>();
         tree->get_all_nodes( tree->root,  nodelist);
@@ -78,7 +72,7 @@ protected:
             else
                 inv++;
         }
-    }
+    }*/
     
 // DATA
     /// how many updateGL calls were made? for debug

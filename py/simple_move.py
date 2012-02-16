@@ -18,7 +18,6 @@ def drawTriangles(myscreen, gl):
     myscreen.addActor(triactor)
     
 def main():
-    
     gl = libcutsim.GLData()  # this class holds lines, triangles, or quads for OpenGL drawing
     iso = libcutsim.MarchingCubes() # this is the algorithm that produces GLData from the stock-model
     cs = libcutsim.Cutsim(20.0, 9, gl, iso) # this is the cutting simulation

@@ -25,7 +25,6 @@
 
 namespace cutsim {
 
-//************* axis-aligned Bounding-Box **************/
 
 Bbox::Bbox() {
     minpt = GLVertex(0,0,0);
@@ -41,24 +40,6 @@ Bbox::Bbox(double b1, double b2, double b3, double b4, double b5, double b6) {
 
 void Bbox::clear() {
     initialized = false;
-}
-
-bool Bbox::isInside(GLVertex& p) const {
-    assert( initialized );
-    if (p.x > maxpt.x)
-        return false;
-    else if (p.x < minpt.x)
-        return false;
-    else if (p.y > maxpt.y)
-        return false;
-    else if (p.y < minpt.y)
-        return false;
-    else if (p.z > maxpt.z)
-        return false;
-    else if (p.z < minpt.z)
-        return false;
-    else
-        return true;
 }
 
 void Bbox::addPoint(const GLVertex &p) {
@@ -84,14 +65,6 @@ void Bbox::addPoint(const GLVertex &p) {
     }
 }
 
-/// add each vertex of the Triangle     
-/* 
-void Bbox::addTriangle(const Triangle &t) {   
-    addPoint( t.p[0] );
-    addPoint( t.p[1] );
-    addPoint( t.p[2] );
-    return;
-}*/
 
 /// does this Bbox overlap with b?
 bool Bbox::overlaps(const Bbox& b) const {
@@ -103,55 +76,6 @@ bool Bbox::overlaps(const Bbox& b) const {
         return false;
     else
         return true;
-}
-
-// does this Bbox contain the other Bbox?
-/*
-bool Bbox::contains( const Bbox& other ) const {
-    if ( minpt.x
-    bool xdir = (minpt.x <= other.minpt.x ) && (other.maxpt.x <= maxpt.x );
-    bool ydir = (minpt.y <= other.minpt.y ) && (other.maxpt.y <= maxpt.y );
-    bool zdir = (minpt.z <= other.minpt.z ) && (other.maxpt.z <= maxpt.z );
-    return xdir && ydir && zdir;
-}*/
-
-// return the bounding box values as a vector:
-//  0    1    2    3    4    5
-// [minx maxx miny maxy minz maxz]
-/*
-double Bbox::operator[](const unsigned int idx) const{
-    switch(idx) {
-        case 0:
-            return minpt.x;
-            break;
-        case 1:
-            return maxpt.x;
-            break;
-        case 2:
-            return minpt.y;
-            break;
-        case 3:
-            return maxpt.y;
-            break;
-        case 4:
-            return minpt.z;
-            break;
-        case 5:
-            return maxpt.z;
-            break;    
-        default:
-            assert(0);
-            break;
-    }
-    assert(0);
-    return -1;
-}*/
-
-std::ostream &operator<<(std::ostream &stream, const Bbox b) {
-  stream << " Bbox \n";
-  //stream << " min= "<< b.minpt <<"\n";
-  //stream << " max= "<< b.maxpt <<"\n";
-  return stream;
 }
 
 } // end namespace

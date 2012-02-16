@@ -61,15 +61,16 @@ class Octree {
         
 // debug, can be removed?
         /// put all leaf-nodes in a list
-        void get_leaf_nodes( std::vector<Octnode*>& nodelist) const { get_leaf_nodes( root,  nodelist); }
+        //void get_leaf_nodes( std::vector<Octnode*>& nodelist) const { get_leaf_nodes( root,  nodelist); }
+        
         /// put all leaf-nodes in a list
         void get_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const;
         /// put all invalid nodes in a list
-        void get_invalid_leaf_nodes(std::vector<Octnode*>& nodelist) const;
+        //void get_invalid_leaf_nodes(std::vector<Octnode*>& nodelist) const;
         /// put all invalid nodes in a list
-        void get_invalid_leaf_nodes( Octnode* current, std::vector<Octnode*>& nodelist) const;
+        //void get_invalid_leaf_nodes( Octnode* current, std::vector<Octnode*>& nodelist) const;
         /// put all nodes in a list
-        void get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const;
+        //void get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const;
         
         /// initialize by recursively calling subdivide() on all nodes n times
         void init(const unsigned int n);

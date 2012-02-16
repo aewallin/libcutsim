@@ -73,11 +73,12 @@ void Octree::init(const unsigned int n) {
         }
     }
 }
-
+/*
 void Octree::get_invalid_leaf_nodes( std::vector<Octnode*>& nodelist) const {
     get_invalid_leaf_nodes( root, nodelist );
-}
+}*/
 
+/*
 void Octree::get_invalid_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const {
     if ( current->childcount == 0 ) {
         if ( !current->valid() ) {
@@ -92,10 +93,11 @@ void Octree::get_invalid_leaf_nodes(Octnode* current, std::vector<Octnode*>& nod
             }
         }
     }
-}   
+} */  
 
 
 /// put leaf nodes into nodelist
+
 void Octree::get_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const {
     if ( current->isLeaf() ) {
         nodelist.push_back( current );
@@ -108,6 +110,7 @@ void Octree::get_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) c
 }
 
 /// put all nodes into nodelist
+/*
 void Octree::get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const {
     if ( current ) {
         nodelist.push_back( current );
@@ -116,7 +119,7 @@ void Octree::get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) co
                 get_all_nodes( current->child[n], nodelist );
         }
     }
-}
+}*/
 
 // sum (union) of tree and OCTVolume
 void Octree::sum(Octnode* current, const Volume* vol) {
@@ -166,12 +169,11 @@ void Octree::diff(Octnode* current, const Volume* vol) {
             }
         }
     }
-    // now all children have their status set, prune.
     
-    /*
+    // now all children have their status set, prune.
     if ( (current->childcount == 8) && ( current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE) ) ) {
         current->delete_children();
-    }*/
+    }
 }
 
 void Octree::intersect(Octnode* current, const Volume* vol) {
@@ -203,6 +205,7 @@ void Octree::intersect(Octnode* current, const Volume* vol) {
 std::string Octree::str() const {
     std::ostringstream o;
     o << " Octree: ";
+    /*
     std::vector<Octnode*> nodelist;
     Octree::get_all_nodes(root, nodelist);
     std::vector<int> nodelevel(this->max_depth);
@@ -220,7 +223,7 @@ std::string Octree::str() const {
     BOOST_FOREACH( int count, nodelevel) {
         o << "depth="<<m <<"  " << count << " nodes, " << invalidsAtLevel[m] << " invalid, surface=" << surfaceAtLevel[m] << " \n";
         ++m;
-    }
+    }*/
     return o.str();
 }
 

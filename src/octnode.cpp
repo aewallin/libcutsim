@@ -140,17 +140,7 @@ GLVertex* Octnode::childcenter(int n) {
     return  new GLVertex(*center + ( direction[n] * 0.5*scale ));
 }
 
-// check if Volume is contained within the node
-// FIXME: do this in BBox !
-/*
-bool Octnode::contains( const Volume* vol ) {
-    GLVertex vol_maxp = vol->bb.maxpt;
-    GLVertex vol_minp = vol->bb.minpt;
-    bool xdir = (bb.minpt.x <= vol_minp.x ) && (vol_maxp.x <= bb.maxpt.x );
-    bool ydir = (bb.minpt.y <= vol_minp.y ) && (vol_maxp.y <= bb.maxpt.y );
-    bool zdir = (bb.minpt.z <= vol_minp.z ) && (vol_maxp.z <= bb.maxpt.z );
-    return xdir && ydir && zdir;
-}*/
+
 
 // create the 8 children of this node
 void Octnode::subdivide() {
