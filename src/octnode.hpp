@@ -49,7 +49,7 @@ class Octnode {
         /// the color of this node
         Color color;
         /// create suboctant idx of parent with scale nodescale and depth nodedepth
-        Octnode(Octnode* parent, unsigned int idx, double nodescale, unsigned int nodedepth, GLData* g);
+        Octnode(Octnode* parent, unsigned int idx, float nodescale, unsigned int nodedepth, GLData* g);
         virtual ~Octnode();
         /// create all eight children of this node
         void subdivide(); 
@@ -101,7 +101,7 @@ class Octnode {
         /// The eight corners of this node
         GLVertex* vertex[8];
         /// value of distance-field at corner vertex
-        double f[8]; 
+        float f[8]; 
         /// the center point of this node
         GLVertex* center; // the centerpoint of this node
         /// the tree-dept of this node
@@ -109,7 +109,7 @@ class Octnode {
         /// the index of this node [0,7]
         unsigned int idx; // index of node
         /// the scale of this node, i.e. distance from center out to corner vertices
-        double scale; // distance from center to vertices
+        float scale; // distance from center to vertices
         /// bounding-box corresponding to this node
         Bbox bb;
     

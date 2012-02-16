@@ -62,6 +62,12 @@ public:
     void setColor(float r, float g, float b) {
         color.r=r; color.g=g; color.b=b;
     }
+    /// set the centerpoint of the sphere
+    void setCenter(float x, float y, float z) {
+        center = GLVertex(x,y,z);
+        calcBB();
+    }
+    virtual void calcBB() {}
 // DATA
     /// bounding-box. This holds the maximum(minimum) points along the X,Y, and Z-coordinates
     /// of the volume (i.e. the volume where dist(p) returns negative values)
@@ -79,57 +85,22 @@ class SphereVolume: public Volume {
         /// default constructor
         SphereVolume();
         /// set radius of sphere
-        void setRadius(double r) {
+        void setRadius(float r) {
             radius=r;
             calcBB();
         }
         /// set the centerpoint of the sphere
-        void setCenter(float x, float y, float z) {
-            center = GLVertex(x,y,z);
-            calcBB();
-        }
+        //void setCenter(float x, float y, float z) {
+        //    center = GLVertex(x,y,z);
+        //    calcBB();
+        //}
         /// update the Bbox
-        void calcBB();
+        virtual void calcBB();
         virtual float dist(const GLVertex& p) const;
 
-        /// center Point of sphere
-        //GLVertex center;
         /// radius of sphere
-        double radius;
+        float radius;
 };
-
-/// box-volume
-/// from corner, go out in the three directions v1,v2,v3
-/// interior points = corner + a*v1 + b*v2 + c*v3  
-/// where a, b, c are in [0,1]
-/*
-class RectVolume : public Volume {
-    public:
-        /// default constructor
-        RectVolume();
-        void set_corner(float x, float y, float z) {
-            corner.x = x;
-            corner.y = y;
-            corner.z = z;
-        }
-        void set_dimensions(float l, float w, float h) {
-            v1 = GLVertex(l,0,0); 
-            v2 = GLVertex(0,w,0);
-            v3 = GLVertex(0,0,h);
-        }
-        /// one corner of the box
-        GLVertex corner;
-        /// first vector from corner, to span the box
-        GLVertex v1;
-        /// second vector
-        GLVertex v2;
-        /// third vector
-        GLVertex v3;
-        /// update the bounding-box
-        void calcBB();
-        double dist(const GLVertex& p) const;
-};*/
-
 
 /// cube at center with side-length side
 class CubeVolume: public Volume {
@@ -137,25 +108,42 @@ class CubeVolume: public Volume {
         /// default constructor
         CubeVolume();
         virtual float dist(const GLVertex& p) const;
-        void setSide(double s) {
+        void setSide(float s) {
             side=s;
             calcBB();
         }
         /// set the centerpoint of the sphere
-        void setCenter(float x, float y, float z) {
-            center = GLVertex(x,y,z);
-            calcBB();
-        }
-        /// center point of cube
-        //GLVertex center;
+        //void setCenter(float x, float y, float z) {
+        //    center = GLVertex(x,y,z);
+        //    calcBB();
+        //}
+
         /// side length of cube
-        double side;
-       // bool isInside(GLVertex& p) const;
+        float side;
         /// update bounding-box
         void calcBB();
-        double dist(GLVertex& p) const;
 };
 
+/// cone, for v-carving sim
+class ConeVolume: public Volume {
+    public:
+        /// default constructor
+        ConeVolume() {
+            alfa = M_PI / 4;
+            setHeight(10);
+        }
+        virtual float dist(const GLVertex& p) const;
+        void setHeight(float h) {
+            height=h;
+            calcBB();
+        }
+
+        /// side length of cube
+        float height;
+        float alfa; // half-angle
+        /// update bounding-box
+        void calcBB();
+};
 
 
 /// cylinder volume
@@ -321,11 +309,14 @@ class CylCutterVolume: public OCTVolume {
 };
 */
 
-/*
+
 /// ball-nose cutter volume
-class BallCutterVolume: public OCTVolume {
+/*
+class BallCutterVolume : public Volume {
     public:
         BallCutterVolume();
+        virtual float dist(const GLVertex& p) const;
+        
         /// cutter radius
         double radius;
         /// cutter length

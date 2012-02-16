@@ -64,7 +64,7 @@ const int Octnode::octant[8] = {
                     128
                 };
 
-Octnode::Octnode(Octnode* nodeparent, unsigned int index, double nodescale, unsigned int nodedepth, GLData* gl) {
+Octnode::Octnode(Octnode* nodeparent, unsigned int index, float nodescale, unsigned int nodedepth, GLData* gl) {
     g=gl;
     parent = nodeparent;
     idx = index;
@@ -165,7 +165,7 @@ void Octnode::sum(const Volume* vol) {
     for ( int n=0;n<8;++n) {
         if (vol->dist( *(vertex[n]) ) > f[n])
             color = vol->color;
-        f[n] = std::max<double>( f[n], vol->dist( *(vertex[n]) ) );
+        f[n] = std::max( f[n], vol->dist( *(vertex[n]) ) );
     }
     set_state();
 }
@@ -174,7 +174,7 @@ void Octnode::diff(const Volume* vol) {
     for ( int n=0;n<8;++n)  {
         if (-1*vol->dist( *(vertex[n]) ) < f[n])
             color = vol->color;
-        f[n] = std::min<double>( f[n], -1.0*vol->dist( *(vertex[n]) ) );
+        f[n] = std::min( f[n], -vol->dist( *(vertex[n]) ) );
     }
     set_state();
 }
@@ -183,7 +183,7 @@ void Octnode::intersect(const Volume* vol) {
     for ( int n=0;n<8;++n) {
         if (vol->dist( *(vertex[n]) ) < f[n])
             color = vol->color;
-        f[n] = std::min<double>( f[n], vol->dist( *(vertex[n]) ) );
+        f[n] = std::min( f[n], vol->dist( *(vertex[n]) ) );
     }
     set_state();
 }

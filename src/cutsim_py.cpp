@@ -49,15 +49,18 @@ BOOST_PYTHON_MODULE(libcutsim) {
         .add_property("b", &GLVertex::b)
     ;
     bp::class_<Volume>("Volume")
+        .def("setCenter", &Volume::setCenter)
     ;
     bp::class_< SphereVolume, bp::bases<Volume> >("SphereVolume")
         .def("setRadius", &SphereVolume::setRadius)
-        .def("setCenter", &SphereVolume::setCenter)
     ;
     bp::class_< CubeVolume, bp::bases<Volume> >("CubeVolume")
         .def("setSide", &CubeVolume::setSide)
-        .def("setCenter", &CubeVolume::setCenter)
     ;
+    bp::class_< ConeVolume, bp::bases<Volume> >("ConeVolume")
+        .def("setHeight", &ConeVolume::setHeight)
+    ;
+    
     bp::class_<IsoSurfaceAlgorithm>("IsoSurfaceAlgorithm")
     ;
     bp::class_< MarchingCubes, bp::bases<IsoSurfaceAlgorithm> >("MarchingCubes")
