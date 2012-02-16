@@ -39,6 +39,9 @@ public:
     bool isInside(GLVertex& p) const;
     /// return true if *this overlaps Bbox b
     bool overlaps(const Bbox& other) const;
+    
+    //bool contains( const Bbox& other ) const;
+    
     /// reset the Bbox (sets initialized=false)
     void clear();
     /// Add a Point to the Bbox.

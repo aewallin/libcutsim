@@ -105,9 +105,20 @@ bool Bbox::overlaps(const Bbox& b) const {
         return true;
 }
 
+// does this Bbox contain the other Bbox?
+/*
+bool Bbox::contains( const Bbox& other ) const {
+    if ( minpt.x
+    bool xdir = (minpt.x <= other.minpt.x ) && (other.maxpt.x <= maxpt.x );
+    bool ydir = (minpt.y <= other.minpt.y ) && (other.maxpt.y <= maxpt.y );
+    bool zdir = (minpt.z <= other.minpt.z ) && (other.maxpt.z <= maxpt.z );
+    return xdir && ydir && zdir;
+}*/
+
 // return the bounding box values as a vector:
 //  0    1    2    3    4    5
 // [minx maxx miny maxy minz maxz]
+/*
 double Bbox::operator[](const unsigned int idx) const{
     switch(idx) {
         case 0:
@@ -134,7 +145,7 @@ double Bbox::operator[](const unsigned int idx) const{
     }
     assert(0);
     return -1;
-}
+}*/
 
 std::ostream &operator<<(std::ostream &stream, const Bbox b) {
   stream << " Bbox \n";

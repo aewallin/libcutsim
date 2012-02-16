@@ -70,7 +70,7 @@ class Octnode {
         bool is_outside()   { return (state==OUTSIDE); }
         /// is this node undecided?
         bool is_undecided() { return (state==UNDECIDED); }
-        bool contains( const Volume* vol );
+        //bool contains( const Volume* vol );
         
         /// return true if all children of this node in given state s
         bool all_child_state(NodeState s) const;
@@ -97,7 +97,7 @@ class Octnode {
         /// number of children
         unsigned int childcount;
         /// The eight corners of this node
-        GLVertex* vertex[8]; 
+        GLVertex* vertex[8];
         /// value of distance-field at corner vertex
         double f[8]; 
         /// the center point of this node

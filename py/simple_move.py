@@ -14,7 +14,7 @@ def drawTriangles(myscreen, gl):
     
     # this draws all triangles with the same color
     triactor = myvtk.STLSurf(triangleList=trianglelist, color=myvtk.cyan)
-    triactor.SetWireframe()
+    #triactor.SetWireframe()
     myscreen.addActor(triactor)
     
 def main():
@@ -24,7 +24,7 @@ def main():
     cs = libcutsim.Cutsim(20.0, 9, gl, iso) # this is the cutting simulation
     print cs
 
-    cs.init(6) # initialize by subdividing octree n-times
+    cs.init(3) # initialize by subdividing octree n-times
     print cs
 
     vol = libcutsim.CubeVolume() # a volume with which we operate on the stock
@@ -41,7 +41,7 @@ def main():
     for n in range(100):
         x = 3*math.cos(0.1*n)
         y = -3 + 0.08*n
-        print x,y
+        #print x,y
         cutter.setCenter(x,y,0.1)
         cs.diff_volume(cutter) # subtract the volume from the stock
         

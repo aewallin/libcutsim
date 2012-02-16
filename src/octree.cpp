@@ -150,7 +150,7 @@ void Octree::diff(Octnode* current, const Volume* vol) {
     }
     
     current->diff(vol);
-    if (current->contains(vol))
+    if ( vol->bb.overlaps( current->bb )  || current->bb.overlaps( vol->bb ) )
         current->setUndecided();
         
     if ( ((current->childcount) == 8) && (current->is_undecided()  ) ) { // recurse into existing tree
