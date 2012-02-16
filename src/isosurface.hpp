@@ -50,31 +50,6 @@ public:
 protected:
     /// update the GLData for the given Octnode. re-implement in sub-class
     virtual void updateGL( Octnode* node) {}
-    /// when the given Octnode is deleted all associated GLData vertices are removed here.
-    /*
-    void remove_node_vertices(Octnode* current ) {
-        exit(-1);
-        while( !current->vertexSetEmpty() ) {
-            unsigned int delId = current->vertexSetTop();
-            current->removeIndex( delId );
-            g->removeVertex( delId );
-        }
-        assert( current->vertexSetEmpty() ); // when done, set should be empty
-    }*/
-    
-    /// count the valid/invalid nodes, for debugging
-    /*
-    void debugValid() {
-        std::vector<Octnode*> nodelist; // = new std::vector<Octnode*>();
-        tree->get_all_nodes( tree->root,  nodelist);
-        int val=0,inv=0;
-        BOOST_FOREACH( Octnode* node , nodelist ) {
-            if ( node->valid() )
-                val++;
-            else
-                inv++;
-        }
-    }*/
     
 // DATA
     /// how many updateGL calls were made? for debug

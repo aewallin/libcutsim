@@ -21,6 +21,7 @@
 
 namespace cutsim {
 
+// this could maybe moved to the base-class, if all sub-classes do it the same way?
 void MarchingCubes::updateGL(Octnode* node) {
     // traverse tree here and call polygonize_node
     if (node->valid())

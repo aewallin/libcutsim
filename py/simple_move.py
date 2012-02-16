@@ -46,7 +46,7 @@ def main():
         #print x,y
         cutter.setCenter(x,y,0.1)
         cs.diff_volume(cutter) # subtract the volume from the stock
-        cs.updateGL()
+        #cs.updateGL()
     t_after = time.time()
     print Nmax, " diff() calls took ", t_after-t_before," seconds"
     cs.updateGL()
