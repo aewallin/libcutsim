@@ -9,11 +9,9 @@ Published under the GNU General Public License, see http://www.gnu.org/licenses/
 import vtk
 import time
 import datetime
-# import ocl
-# import pyocl
-#import openvoronoi as ovd
 import math
 
+# color definitions
 white = (1,1,1)
 black = (0,0,0)
 grey = ( float(127)/255,float(127)/255,float(127)/255)
@@ -36,6 +34,18 @@ cyan=  (0,1,1)
 mag2 =( float(123)/255 , float(35)/255 , float(251)/255  )
 magenta = ( float(153)/255 , float(42)/255 , float(165)/255  )
 
+def drawTriangles(myscreen, trianglelist):
+    # list of triangles
+    # [ [p1,p2,p3] ,
+    #   [p4,p5,p6] ,
+    #   ...
+    # ]
+    #print "drawing ",len(trianglelist)," triangles"    
+    # this draws all triangles with the same color
+    triactor = STLSurf(triangleList=trianglelist, color=cyan)
+    #triactor.SetWireframe()
+    myscreen.addActor(triactor)
+    
 
 def drawLine(myscreen, pt1, pt2, lineColor):
     myscreen.addActor( Line(p1=(pt1.x,pt1.y,0),p2=(pt2.x,pt2.y,0),color=lineColor) ) 

@@ -4,6 +4,7 @@ import math
 import time
 
 # draw triangles from GLData
+"""
 def drawTriangles(myscreen, gl):
     trianglelist = gl.get_triangles()
     # list of triangles
@@ -17,6 +18,7 @@ def drawTriangles(myscreen, gl):
     triactor = myvtk.STLSurf(triangleList=trianglelist, color=myvtk.cyan)
     #triactor.SetWireframe()
     myscreen.addActor(triactor)
+"""
     
 def main():
     gl = libcutsim.GLData()  # this class holds lines, triangles, or quads for OpenGL drawing
@@ -60,7 +62,7 @@ def main():
     h=1024
     myscreen = myvtk.VTKScreen(width=w, height=h) 
     
-    drawTriangles(myscreen, gl)
+    myvtk.drawTriangles(myscreen, gl.get_triangles())
     
     myscreen.render()   
     myscreen.iren.Start()

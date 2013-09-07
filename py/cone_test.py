@@ -2,21 +2,6 @@ import libcutsim
 import myvtk
 import math
 import time
-
-# draw triangles from GLData
-def drawTriangles(myscreen, gl):
-    trianglelist = gl.get_triangles()
-    # list of triangles
-    # [ [p1,p2,p3] ,
-    #   [p4,p5,p6] ,
-    #   ...
-    # ]
-    print "drawing ",len(trianglelist)," triangles"
-    
-    # this draws all triangles with the same color
-    triactor = myvtk.STLSurf(triangleList=trianglelist, color=myvtk.cyan)
-    #triactor.SetWireframe()
-    myscreen.addActor(triactor)
     
 def main():
     gl = libcutsim.GLData()  # this class holds lines, triangles, or quads for OpenGL drawing
@@ -27,14 +12,11 @@ def main():
     cs.init(3) # initialize by subdividing octree n-times
     print cs
 
-    vol = libcutsim.CubeVolume() # a volume with which we operate on the stock
+    vol = libcutsim.CubeVolume() # a volume for creating stock
     vol.setSide(10)
     vol.setCenter(0,0,-5)
-
     cs.sum_volume(vol) # sum the volume to the stock, creating new material
-    
-    # the volume with which we cut
-    
+        
     cutter = libcutsim.ConeVolume()
     #cutter.setRadius(float(0.7))
     # move around the cutter and subtract at each point
@@ -49,8 +31,8 @@ def main():
         #cs.updateGL()
     t_after = time.time()
     print Nmax, " diff() calls took ", t_after-t_before," seconds"
-    cs.updateGL()
-    # this updates the GLData so we can draw the stock
+
+    cs.updateGL() # this updates the GLData so we can draw the stock
     
     print cs
     print gl
@@ -59,9 +41,7 @@ def main():
     w=1024
     h=1024
     myscreen = myvtk.VTKScreen(width=w, height=h) 
-    
-    drawTriangles(myscreen, gl)
-    
+    myvtk.drawTriangles(myscreen, gl.get_triangles())
     myscreen.render()   
     myscreen.iren.Start()
     
