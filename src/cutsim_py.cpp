@@ -24,7 +24,9 @@ namespace bp = boost::python;
 #include "gldata.hpp"
 #include "volume.hpp"
 #include "isosurface.hpp"
- 
+
+// python wrapper for libcutsim classes & functions
+
 BOOST_PYTHON_MODULE(libcutsim) {
     using namespace cutsim;
     
@@ -38,6 +40,8 @@ BOOST_PYTHON_MODULE(libcutsim) {
     ;
     bp::class_<GLData>("GLData")
         .def("get_triangles", &GLData::get_triangles)
+        .def("get_lines", &GLData::get_lines)
+
         .def("__str__", &GLData::str)
     ;
     bp::class_<GLVertex>("GLVertex")
@@ -64,6 +68,8 @@ BOOST_PYTHON_MODULE(libcutsim) {
     bp::class_<IsoSurfaceAlgorithm>("IsoSurfaceAlgorithm")
     ;
     bp::class_< MarchingCubes, bp::bases<IsoSurfaceAlgorithm> >("MarchingCubes")
+    ;
+    bp::class_< CubeWireFrame, bp::bases<IsoSurfaceAlgorithm> >("CubeWireFrame")
     ;
 
 }

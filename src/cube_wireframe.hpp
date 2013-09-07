@@ -29,10 +29,11 @@ namespace cutsim {
 /// simple cube wireframe display of octree
 /// inside, outside, and undecided nodes/cubes can be colored with a different color
 /// we can choose to draw only inside, outside, or undecided nodes
-/// very simple algorith, all GLData is updated every time we run updateGL (this is slow!)
+///
+/// very simple algorithm, all GLData is updated every time we run updateGL (this is slow!)
+///
 class CubeWireFrame : public IsoSurfaceAlgorithm {
 public:
-    /// create algorithm
     CubeWireFrame( ) : IsoSurfaceAlgorithm() {
         //g->setLines(); // two indexes per line-segment
         inside_color.set(1,0,0);
@@ -44,18 +45,13 @@ public:
     }
     virtual void set_polyVerts(unsigned int ) { g->setLines(); }
 protected:
-    /// color for inside nodes
-    Color inside_color;
-    /// color for outside nodes
-    Color outside_color;
-    /// color for undecided nodes
-    Color undecided_color;
-    /// flag for drawing inside nodes
-    bool draw_inside;
-    /// flag for drawing outside nodes
-    bool draw_outside;
-    /// flag for drawing undecided nodes
-    bool draw_undecided;
+    Color inside_color;     ///< color for inside nodes
+    Color outside_color;    ///< color for outside nodes
+    Color undecided_color;  ///< color for undecided nodes
+    bool draw_inside;       ///< flag for drawing inside nodes
+    bool draw_outside;      ///< flag for drawing outside nodes
+    bool draw_undecided;    ///< flag for drawing undecided nodes
+
     // traverse tree and add/remove gl-elements to GLData
     void updateGL( Octnode* node) {
         if (node->valid()) {
@@ -66,7 +62,8 @@ protected:
             node->clearVertexSet(); // remove all previous GLData
             
             // add lines corresponding to the cube.
-            const int segTable[12][2] = { // cube image: http://paulbourke.net/geometry/polygonise/
+            // cube image: http://paulbourke.net/geometry/polygonise/
+            const int segTable[12][2] = { 
                 {0, 1},{1, 2},{2, 3},{3, 0},
                 {4, 5},{5, 6},{6, 7},{7, 4},
                 {0, 4},{1, 5},{2, 6},{3, 7}
@@ -79,7 +76,7 @@ protected:
                     std::vector< unsigned int > lineSeg;
                     GLVertex p1 = *(node->vertex)[ segTable[i][0 ] ];
                     GLVertex p2 = *(node->vertex)[ segTable[i][1 ] ];
-                    Color line_color;
+                    Color line_color = outside_color;
                     if (node->is_outside()) {
                         line_color = outside_color;
                     } 
@@ -96,6 +93,7 @@ protected:
                     lineSeg.push_back( g->addVertex( p2, node ) );
                     node->addIndex( lineSeg[0] ); 
                     node->addIndex( lineSeg[1] ); 
+                    std::cout << "line " << lineSeg[0] << " - " << lineSeg[1] << "\n";
                     g->addPolygon( lineSeg );
                 }
             }

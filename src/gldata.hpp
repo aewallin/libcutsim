@@ -129,6 +129,23 @@ public:
         }
         return out;
     }
+    
+    /// export line-list to python
+    boost::python::list get_lines() {
+        boost::python::list out;
+        for (unsigned int n=0;n<indexArray.size();n+=2) {
+            GLVertex p1 = vertexArray[n ];
+            GLVertex p2 = vertexArray[n+1];
+            //GLVertex p3 = vertexArray[n+2];
+            boost::python::list tri;
+            tri.append(p1);
+            tri.append(p2);
+            //tri.append(p3);
+            out.append(tri);
+        }
+        return out;
+    }
+    
 // type of GLData
     void setTriangles() {
         triangles=true;

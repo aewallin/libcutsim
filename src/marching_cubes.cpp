@@ -25,12 +25,12 @@ namespace cutsim {
 void MarchingCubes::updateGL(Octnode* node) {
     // traverse tree here and call polygonize_node
     if (node->valid())
-        return;
+        return; // don't process valid nodes
     
     if ( node->is_undecided() && node->isLeaf() ) {
         assert( !node->valid() );
         node->clearVertexSet();
-        mc_node(node);
+        mc_node(node); // create triangles for undecided leaf-node
         node->setValid();
     }
 
@@ -38,8 +38,8 @@ void MarchingCubes::updateGL(Octnode* node) {
     if ( node->childcount == 8 ) {
         for (unsigned int m=0;m<8;m++) {
                 if (!node->child[m]->valid()) {
-                    node->clearVertexSet();
-                    updateGL( node->child[m] );
+                    node->clearVertexSet();      // remove old vertices
+                    updateGL( node->child[m] );  // create new ones
                 }
         }
     }
@@ -49,7 +49,7 @@ void MarchingCubes::updateGL(Octnode* node) {
 /// this generates one or more triangles which are pushed to the GLData
 void MarchingCubes::mc_node( Octnode* node) {
     assert( node->childcount == 0 ); // don't call this on non-leafs!
-    assert( node->is_undecided() );
+    assert( node->is_undecided() );  // must be undecided, completelu inside/outside nodes don't contribute to the surface
     unsigned int edgeTableIndex = mc_edgeTableIndex(node);
     unsigned int edges = edgeTable[edgeTableIndex];
     std::vector< GLVertex > vertices = interpolated_vertices(node, edges);

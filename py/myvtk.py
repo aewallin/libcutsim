@@ -40,15 +40,22 @@ def drawTriangles(myscreen, trianglelist):
     #   [p4,p5,p6] ,
     #   ...
     # ]
-    #print "drawing ",len(trianglelist)," triangles"    
     # this draws all triangles with the same color
     triactor = STLSurf(triangleList=trianglelist, color=cyan)
     #triactor.SetWireframe()
     myscreen.addActor(triactor)
-    
+
+def drawLines(myscreen, seglist):
+    n =0
+    for seg in seglist:
+        print n
+        n=n+1
+        drawLine(myscreen, seg[0], seg[1], cyan)
+
+
 
 def drawLine(myscreen, pt1, pt2, lineColor):
-    myscreen.addActor( Line(p1=(pt1.x,pt1.y,0),p2=(pt2.x,pt2.y,0),color=lineColor) ) 
+    myscreen.addActor( Line(p1=(pt1.x,pt1.y,pt1.z),p2=(pt2.x,pt2.y,pt2.z),color=lineColor) ) 
 
 def drawArc(myscreen, pt1, pt2, r, cen,cw,arcColor):
     # draw arc as many line-segments
