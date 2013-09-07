@@ -29,11 +29,12 @@
 
 namespace cutsim {
     
-/// base-class for defining implicit volumes from which to build octrees
+/// Volume is a base-class for defining implicit volumes from which to build octrees
 /// an implicit volume is defined as a function dist(Point p)
 /// which returns a positive value inside the volume and a negative value outside.
 /// 
-/// the "positive inside, negative outside" sign-convetion means that boolean operations can be done with:
+/// the "positive inside, negative outside" sign-convetion means that 
+/// boolean operations between two Volumes A and B can be done with:
 ///
 ///  A U B ('union' or 'sum') =  max( d(A),  d(B) )
 ///  A \ B ('diff' or 'minus') = min( d(A), -d(B) )
@@ -49,10 +50,10 @@ namespace cutsim {
 /// more information such as normals of the distance field or exact
 /// intersection points and normals. This is similar to a tri-dexel representation.
 /// In multi-material simulation a material-index can be stored.
-/// Each cutter may also cut the material with a color of its own (new vertices have the color of the cutter).
+/// Each cutter may also cut the material with a color of its own 
+/// (new vertices have the color of the cutter).
 class Volume {
 public:
-    /// default constructor
     Volume(){}
     /// return signed distance from volume surface to Point p
     /// Points p inside the volume should return positive values.
@@ -67,10 +68,11 @@ public:
         center = GLVertex(x,y,z);
         calcBB();
     }
-    virtual void calcBB() {}
+    virtual void calcBB() {} ///< update bounding-box
 // DATA
-    /// bounding-box. This holds the maximum(minimum) points along the X,Y, and Z-coordinates
-    /// of the volume (i.e. the volume where dist(p) returns negative values)
+    /// bounding-box. This holds the maximum and minimum points along the (x,y,z) coordinates
+    /// of the volume
+    /// dist(p) can return positive "inside" values only inside the bounding-box
     Bbox bb;
     /// the color of this Volume
     Color color;
@@ -89,45 +91,29 @@ class SphereVolume: public Volume {
             radius=r;
             calcBB();
         }
-        /// set the centerpoint of the sphere
-        //void setCenter(float x, float y, float z) {
-        //    center = GLVertex(x,y,z);
-        //    calcBB();
-        //}
         /// update the Bbox
         virtual void calcBB();
         virtual float dist(const GLVertex& p) const;
-
-        /// radius of sphere
-        float radius;
+        float radius;   ///< radius of sphere
 };
 
 /// cube at center with side-length side
 class CubeVolume: public Volume {
     public:
-        /// default constructor
         CubeVolume();
         virtual float dist(const GLVertex& p) const;
         void setSide(float s) {
             side=s;
             calcBB();
         }
-        /// set the centerpoint of the sphere
-        //void setCenter(float x, float y, float z) {
-        //    center = GLVertex(x,y,z);
-        //    calcBB();
-        //}
-
-        /// side length of cube
-        float side;
-        /// update bounding-box
         void calcBB();
+// DATA
+        float side;    ///< side length of cube
 };
 
 /// cone, for v-carving sim
 class ConeVolume: public Volume {
     public:
-        /// default constructor
         ConeVolume() {
             alfa = M_PI / 4;
             setHeight(10);
@@ -137,12 +123,10 @@ class ConeVolume: public Volume {
             height=h;
             calcBB();
         }
-
-        /// side length of cube
-        float height;
-        float alfa; // half-angle
-        /// update bounding-box
         void calcBB();
+// DATA
+        float height;  ///< height of cone
+        float alfa;    ///< half-angle of cone
 };
 
 

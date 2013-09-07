@@ -31,8 +31,8 @@ namespace cutsim {
 
 /// abstract base class for isosurface extraction algorithms
 /// 
-/// isosurface algorithms produce vertices and polygons based on an Octree
-/// vertices and polygons are added to a GLData using addVertex, addPolygon, etc.
+/// isosurface algorithms produce vertices and polygons based on an Octree.
+/// Vertices and polygons are added to a GLData using addVertex, addPolygon, etc.
 ///
 class IsoSurfaceAlgorithm {
 public:
@@ -41,25 +41,19 @@ public:
     virtual ~IsoSurfaceAlgorithm() {}
     void set_gl(GLData* gl) { g = gl; }
     void set_tree(Octree* tr) {tree = tr;}
-    virtual void set_polyVerts() {}
-    // return polygons corresponding to the octree node
+    virtual void set_polyVerts() {} ///< set vertices per polygon (2, 3, or 4)
     /// update GLData
-    virtual void updateGL() { 
-        updateGL( tree->root );
-    }
+    virtual void updateGL() { updateGL( tree->root ); }
 protected:
     /// update the GLData for the given Octnode. re-implement in sub-class
     virtual void updateGL( Octnode* node) {}
     
 // DATA
-    /// how many updateGL calls were made? for debug
-    int update_calls;
-    /// how many valid nodes? for debug
-    int valid_count;
-    /// the GLData to which we udpate vertices/polygons
-    GLData* g;
-    /// the Octree which we traverse to update GLData
-    Octree* tree;
+    int update_calls;  ///< how many updateGL calls were made? for debug
+    int valid_count;   ///< how many valid nodes? for debug
+
+    GLData* g;     ///< the GLData to which we udpate vertices/polygons
+    Octree* tree;  ///< the Octree which we traverse to update GLData
 };
 
 

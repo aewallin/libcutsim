@@ -19,14 +19,13 @@
 
 #pragma once
 
-#include <boost/python.hpp>
-
 #include <iostream>
 #include <set>
 #include <cmath>
 #include <vector>
 
 #include <boost/foreach.hpp>
+#include <boost/python.hpp>
 
 #include "glvertex.hpp"
 
@@ -34,7 +33,7 @@ namespace cutsim {
 
 class Octnode;
 
-/// additional vertex data not needed for OpenGL rendering
+/// This class holds additional vertex data not needed for OpenGL rendering
 /// but required for the isosurface or cutting-simulation algorithm.
 struct VertexData {
     /// string output
@@ -63,10 +62,12 @@ struct VertexData {
 };
 
 
-// the "secret sauce" paper suggests the following primitives
+//   See the "secret sauce" paper: 
 //   http://www.cs.berkeley.edu/~jrs/meshpapers/SchaeferWarren2.pdf
 //   or
 //   http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.13.2631
+//
+//   The following four operations are perfomed by an IsoSurfaceAlgorithm
 //
 // - add vertex  
 //   add vertex with empty polygon list and pointer to octree-node
@@ -75,7 +76,7 @@ struct VertexData {
 //   process list of polygons, from highest to lowest. call remove_polygon on each poly.
 //   overwrite with last vertex. shorten list. request each poly to re-number.
 // 
-// - add polygon DONE
+// - add polygon
 //   append new polygon to end of list, request each vertex to add new polygon to list.
 //
 // - remove_polygon( polygonIndex ) 
@@ -88,10 +89,18 @@ struct VertexData {
 // polygon-table: index, vertex-list
 //
 
-/// a GLData object holds data which is drawn by OpenGL 
+/// a GLData object holds data which is drawn/rendered by OpenGL 
 ///
-/// holds two arrays vertexArray and indexArray for OpenGL drawing
-/// with 
+/// Data is held in two arrays vertexArray and indexArray 
+/// 
+/// vertexArray holds GLVertex vertices for drawing
+/// a corresponding vertexDataArray holds extra data for each vertex. the extra data is:
+///  - which polygons make use of this vertex
+///  - which octree node created this vertex
+///
+/// indexArray holds polygon data. If triangles(quads) are to be drawn 
+/// we draw a triangle(quad) for each set of three(four) indices in this array
+///
 class GLData {
 public:
     GLData();
@@ -104,6 +113,8 @@ public:
     int addPolygon( std::vector<unsigned int>& verts);
     void removePolygon( unsigned int polygonIdx);
     std::string str();
+    
+    /// export triangle-list to python
     boost::python::list get_triangles() {
         boost::python::list out;
         for (unsigned int n=0;n<indexArray.size();n+=3) {
@@ -130,6 +141,7 @@ public:
         polyVerts=2;
     }
 
+    // these are really properties of GLVertex, so why are they here??
     /// byte-offset for coordinate data in the vertexArray
     static const unsigned int vertex_offset = 0;
     /// byte-offset for color data in the vertexArray
@@ -143,23 +155,16 @@ public:
     const unsigned int* getIndexArray() const { return indexArray.data(); }
     /// number of vertices per polygon (usually 3 or 4)
     inline const int polygonVertices() const { return polyVerts; }
-
     /// length of indexArray
     inline const int indexCount() const { return indexArray.size(); }
 
 protected:
-    /// vertex coordinates
-    std::vector<GLVertex>    vertexArray;
-    
-    /// non-OpenGL data associated with vertices. 
-    std::vector<VertexData>  vertexDataArray; 
-    
-    /// polygon indices
-    std::vector<unsigned int>      indexArray;
-    
-    int polyVerts; // number of vertices per polygon. 3 for triangles, 4 for quads.
-    bool triangles; // GLData should be drawn as triangles
-    bool lines; // GLData should be drawn as lines
+    std::vector<GLVertex>    vertexArray;      ///< vertex coordinates
+    std::vector<VertexData>  vertexDataArray;  ///< non-OpenGL data associated with vertices. 
+    std::vector<unsigned int>      indexArray; ///< polygon indices
+    int polyVerts;  ///< number of vertices per polygon. 3 for triangles, 4 for quads.
+    bool triangles; ///< true GLData should be drawn as triangles
+    bool lines;     ///< true if GLData should be drawn as lines
 };
 
 } // end namespace

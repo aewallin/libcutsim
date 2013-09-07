@@ -23,10 +23,10 @@
 
 namespace cutsim {
 
-/// axis-aligned bounding-box, stores max and min x,y,z coordinates
-/// in points minpt and maxpt and provides methods for clearing ad setting these
+/// axis-aligned bounding-box, stores max and min (x,y,z) coordinates
+/// as GLVertex minpt and GLVertex maxpt and provides methods for clearing and setting these
 ///
-/// for rapid overlap-checking of Volume with Octnode
+/// used for rapid overlap-checking of Vola ume with an Octnode
 class Bbox {
 public:
     Bbox();

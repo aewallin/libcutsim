@@ -17,15 +17,12 @@
  *  along with libcutsim.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include <cassert>
 #include <cmath>
 
 #include "volume.hpp"
 
 namespace cutsim {
-
-
 
 //************* Sphere **************/
 

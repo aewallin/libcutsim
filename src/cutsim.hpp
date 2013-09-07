@@ -37,16 +37,16 @@
 
 namespace cutsim {
 
-/// a Cutsim stores an Octree stock model, uses an iso-surface extraction
+/// a Cutsim stores/manipulates an Octree stock model, uses an IsoSurfaceAlgorithm
 /// algorithm to generate surface triangles, and communicates with
 /// the corresponding GLData surface which is used for rendering
 /// 
 /// the stock is modified using boolean operations:
-/// - sum / unioin
+/// - sum / union
 /// - subtract / difference
-/// - 'product' / intersection
+/// - product / intersection
 ///
-/// after a boolean operation, caliing updateGL() will update the graphics object
+/// after a boolean operation, calling updateGL() will update the graphics object
 ///
 class Cutsim  {
     
@@ -60,20 +60,17 @@ public:
     /// \param gld the GLData used to draw the stock
     Cutsim(double octree_size, unsigned int octree_max_depth, GLData* gld, IsoSurfaceAlgorithm* iso);
     virtual ~Cutsim();
-    /// subtract/diff given Volume
-    void diff_volume( const Volume* vol );
-    /// sum/union given Volume
-    void sum_volume( const Volume* vol );
-    /// intersect/"and" given Volume
-    void intersect_volume( const Volume* vol );
-    /// update the GL-data
-    void updateGL(); 
+    void diff_volume( const Volume* vol );       ///< subtract/diff given Volume
+    void sum_volume( const Volume* vol );        ///< sum/union given Volume
+    void intersect_volume( const Volume* vol );  ///< intersect/"and" given Volume
+    void updateGL();                             ///< update the GL-data
+
     void init(unsigned int n);
     std::string str() const;
 private:
     IsoSurfaceAlgorithm* iso_algo; // the isosurface-extraction algorithm to use
     Octree* tree; // this is the stock model
-    GLData* g; // this is the graphics object representing the stock
+    GLData* g; // this is the graphics object, for rendering
 };
 
-} // end namespace
+} // end Cutsim namespace

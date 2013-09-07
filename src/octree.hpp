@@ -26,17 +26,17 @@
 #include "bbox.hpp"
 #include "gldata.hpp"
 
-
 namespace cutsim {
 
 class Octnode;
 class Volume;
 
-
 /// Octree class for cutting simulation
 /// see http://en.wikipedia.org/wiki/Octree
+///
 /// The root node is divided into eight sub-octants, and each sub-octant
 /// is recursively further divided into octants.
+///
 /// The side-length of the root node is root_scale
 /// The dept of the root node is zero.
 /// Subdivision is continued unti max_depth is reached.
@@ -59,17 +59,18 @@ class Octree {
         /// intersect tree with given Volume
         void intersect(const Volume* vol) { intersect( this->root, vol); }
         
-// debug, can be removed?
-        /// put all leaf-nodes in a list
+        // debug, can be removed?
+        // put all leaf-nodes in a list
         //void get_leaf_nodes( std::vector<Octnode*>& nodelist) const { get_leaf_nodes( root,  nodelist); }
         
         /// put all leaf-nodes in a list
         void get_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const;
-        /// put all invalid nodes in a list
+        
+        // put all invalid nodes in a list
         //void get_invalid_leaf_nodes(std::vector<Octnode*>& nodelist) const;
-        /// put all invalid nodes in a list
+        // put all invalid nodes in a list
         //void get_invalid_leaf_nodes( Octnode* current, std::vector<Octnode*>& nodelist) const;
-        /// put all nodes in a list
+        // put all nodes in a list
         //void get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const;
         
         /// initialize by recursively calling subdivide() on all nodes n times
@@ -106,7 +107,7 @@ class Octree {
         /// the GLData used to draw this tree
         GLData* g;
     private:
-        Octree() {  }
+        Octree() {  } // disable constructor
         
 };
 

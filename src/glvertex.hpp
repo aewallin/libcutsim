@@ -22,17 +22,13 @@
 #include <cassert>
 #include <cmath>
 
-
 namespace cutsim {
 
 /// color of a GL-vertex
 struct Color {
-    /// red
-    float r;
-    /// green
-    float g;
-    /// blue
-    float b;
+    float r;    ///< red
+    float g;    ///< green
+    float b;    ///< blue
     /// set color
     void set(float ri, float gi, float bi) {
         r=ri;
@@ -40,6 +36,7 @@ struct Color {
         b=bi;
     }
 };
+
 
 /// a vertex/point in 3D, with (x,y,z) coordinates of type float
 /// normal is (nx,ny,nz)
@@ -96,26 +93,19 @@ struct GLVertex {
     std::string str() { return "glvertex"; } //(%1, %2, %3 )").arg(x).arg(y).arg(z); }
     
 // DATA
-    /// x-coordinate
-    float x;
-    /// y-coordinate
-    float y;
-    /// z-coordinate
-    float z; 
-    /// red
-    float r;
-    /// green
-    float g;
-    /// blue
-    float b; // color, 12-bytes offset from position data.
-    /// normal x-coordinate
-    float nx;
-    /// normal y-coordinate
-    float ny;
-    /// normal z-coordinate
-    float nz; // normal, 24-bytes offset
+    float x;    ///< x-coordinate
+    float y;    ///< y-coordinate
+    float z;    ///< z-coordinate
+// color, 3*4=12-bytes offset from position data.
+    float r;    ///< red
+    float g;    ///< green
+    float b;    ///< blue
+// normal, 24-bytes offset
+    float nx;   ///< normal x-coordinate
+    float ny;   ///< normal y-coordinate
+    float nz;   ///< normal z-coordinate
     
-// Operators etc
+// Operators 
     /// return length
     float norm() const {
         return sqrt( x*x + y*y + z*z );

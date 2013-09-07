@@ -42,12 +42,10 @@ class Octnode {
     public:
         /// node state, one of inside, outside, or undecided
         enum NodeState  {INSIDE, OUTSIDE, UNDECIDED };
-        /// the current state of this node
-        NodeState state;
-        /// previous state of this node
-        NodeState prev_state;
-        /// the color of this node
-        Color color;
+        NodeState state;         ///< the current state of this node
+        NodeState prev_state;    ///< previous state of this node
+        Color color;         /// the color of this node
+
         /// create suboctant idx of parent with scale nodescale and depth nodedepth
         Octnode(Octnode* parent, unsigned int idx, float nodescale, unsigned int nodedepth, GLData* g);
         virtual ~Octnode();
@@ -59,20 +57,13 @@ class Octnode {
             subdivide();
         }
     // BOOLEAN OPS
-        /// sum Volume to this node
-        void sum(const Volume* vol);
-        /// diff Volume from this node
-        void diff(const Volume* vol);
-        /// intersect this node with given Volume
-        void intersect(const Volume* vol);
+        void sum(const Volume* vol);         ///< sum Volume to this Octnode
+        void diff(const Volume* vol);        ///< diff Volume from this Octnode
+        void intersect(const Volume* vol);   ///< intersect this Octnode with given Volume
         
-        /// is this node outside?
         bool is_inside()    { return (state==INSIDE); }
-        /// is this node outside?
         bool is_outside()   { return (state==OUTSIDE); }
-        /// is this node undecided?
         bool is_undecided() { return (state==UNDECIDED); }
-
         
         /// return true if all children of this node in given state s
         bool all_child_state(NodeState s) const;
@@ -116,7 +107,8 @@ class Octnode {
     // for manipulating vertexSet
         /// add id to the vertex set
         void addIndex(unsigned int id);
-        /// swap the id for an existing oldId to the given newId. This is called from GLData when GLData needs to move around vertices
+        /// swap the id for an existing oldId to the given newId. 
+        /// This is called from GLData when GLData needs to move around vertices
         void swapIndex(unsigned int oldId, unsigned int newId);
         /// remove given id from vertex set
         void removeIndex(unsigned int id);
@@ -127,15 +119,11 @@ class Octnode {
         /// remove all vertices associated with this node. calls GLData to also remove nodes
         void clearVertexSet();
 
-        /// string output
+        // string output
         friend std::ostream& operator<<(std::ostream &stream, const Octnode &o);
-        /// string output
         std::string str() const;
-        /// string output
         std::string printF();
-        /// string output
-        std::string spaces() const;
-        /// string output
+        std::string spaces() const; // "tabs" for aligned printing
         std::string type() const;
         
         /// set node to undecided
@@ -153,10 +141,11 @@ class Octnode {
         /// set the given child to invalid
         inline void setChildInvalid( unsigned int id );
 
-        /// the vertex indices that this node has produced. These correspond to vertex id's in the GLData.
+        /// the vertex indices that this node has produced. 
+        /// These correspond to vertex id's in the GLData vertexArray.
         std::set<unsigned int> vertexSet;
         /// return center of child with index n
-        GLVertex* childcenter(int n); // return position of child centerpoint
+        GLVertex* childcenter(int n); // return position of child center
         /// The GLData, i.e. vertices and polygons, associated with this node
         /// when this node is deleted we notify the GLData that vertices should be removed
         GLData* g;
@@ -170,7 +159,7 @@ class Octnode {
         /// the direction to the vertices, from the center 
         static const GLVertex direction[8];
         /// bit masks for the status
-        static const int octant[8];
+        static const int octant[8];         
     private:
         Octnode(){}
 };
