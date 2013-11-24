@@ -9,3 +9,29 @@ $ sudo make install
 use !
 
 check py/ for examples 
+
+see also: http://openscam.com/
+
+References
+
+Sarah F. Frisken, Ronald N. Perry, Alyn P. Rockwood, Thouis R. Jones
+Adaptively Sampled Distance Fields: A General Representation of Shape for
+Computer Graphics
+http://www.merl.com/papers/docs/TR2000-15.pdf
+http://www.merl.com/papers/docs/TR2006-054.pdf
+
+Dual Contouring of Hermite Data
+http://www.cs.rice.edu/~jwarren/papers/dualcontour.pdf
+
+Dual Contouring "The Secret Sauce"
+http://www.cs.rice.edu/~jwarren/papers/techreport02408.pdf
+
+Hong T. Yau, Lee S. Tsou and Yu C. Tong
+Adaptive NC Simulation for Multi-axis Solid Machining
+http://www.cadanda.com/V2Nos1to4_11.pdf
+
+ Hong-Tzong Yau and Lee-Sen Tsou 
+Efficient NC Simulation for Multi-Axis Solid Machining With
+a Universal APT Cutter
+http://computingengineering.asmedigitalcollection.asme.org/article.aspx?articleid=1401485
+
