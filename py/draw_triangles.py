@@ -7,10 +7,10 @@ def main():
     octree_size = 10.0 # size of 'world'
     octree_max_depth = 8
     cs = libcutsim.Cutsim(octree_size, octree_max_depth, gl, iso) # this is the cutting simulation
-    print cs
+    print(cs)
 
     cs.init(3) # initialize by subdividing octree n-times
-    print cs
+    print(cs)
 
     # create stock material
     vol = libcutsim.SphereVolume() # a volume with which we operate on the stock
@@ -25,8 +25,8 @@ def main():
     
     cs.updateGL() # this updates the GLData so we can draw the stock
     
-    print cs
-    print gl
+    print(cs)
+    print(gl)
     
     # create a VTK view for drawing
     w=1024
