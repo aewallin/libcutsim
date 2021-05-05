@@ -42,7 +42,7 @@ endif()
 # this figures out the Python include directories and adds them to the
 # header file search path
 execute_process(
-    COMMAND python-config --includes
+    COMMAND python3-config --includes
     COMMAND sed -r "s/-I//g; s/ +/;/g"
     COMMAND tr -d '\n'
     OUTPUT_VARIABLE Python_Includes
@@ -99,7 +99,7 @@ set_target_properties(libcutsim PROPERTIES PREFIX "") # avoid liblib
 
 # this figures out where to install the Python modules
 execute_process(
-    COMMAND python -c "from distutils.sysconfig import get_python_lib; print get_python_lib(0,0,\"/usr/local\")"
+    COMMAND python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(0,0,\"/usr/local\"))"
     OUTPUT_VARIABLE Python_site_packages
     OUTPUT_STRIP_TRAILING_WHITESPACE
 ) # on Ubuntu 11.10 this outputs: /usr/local/lib/python2.7/dist-packages
