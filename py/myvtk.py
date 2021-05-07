@@ -48,7 +48,7 @@ def drawTriangles(myscreen, trianglelist):
 def drawLines(myscreen, seglist):
     n =0
     for seg in seglist:
-        print n
+        print(n)
         n=n+1
         drawLine(myscreen, seg[0], seg[1], cyan)
 
@@ -129,7 +129,7 @@ def drawOffsets(myscreen, ofs):
                 #myscreen.addActor( ovdvtk.Line(p1=(previous.x,previous.y,0),p2=(p.x,p.y,0),color=loopColor) )
                 previous=p
             n=n+1
-        print "rendered loop ",nloop, " with ", len(lop), " points"
+        print("rendered loop ",nloop, " with ", len(lop), " points")
         nloop = nloop+1
         
         
@@ -395,7 +395,7 @@ class Cone(CamvtkActor):
         transformFilter.Update()
         
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(transformFilter.GetOutput())
+        self.mapper.SetInputConnection(transformFilter.GetOutputPort())
         
         
         #self.mapper = vtk.vtkPolyDataMapper()
@@ -415,7 +415,7 @@ class Sphere(CamvtkActor):
         self.src.SetPhiResolution(resolution)
 
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src.GetOutput())
+        self.mapper.SetInputConnection(self.src.GetOutputPort())
         self.SetMapper(self.mapper)
         self.SetColor(color)
 
@@ -430,7 +430,7 @@ class Cube(CamvtkActor):
         self.src.SetZLength(length)
         
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src.GetOutput())
+        self.mapper.SetInputConnection(self.src.GetOutputPort())
         self.SetMapper(self.mapper)
         self.SetColor(color)
 
@@ -461,7 +461,7 @@ class Cylinder(CamvtkActor):
         
         self.mapper = vtk.vtkPolyDataMapper()
         #self.mapper.SetInput(self.src.GetOutput())
-        self.mapper.SetInput( transformFilter.GetOutput() )
+        self.mapper.SetInputConnection( transformFilter.GetOutputPort() )
         self.SetMapper(self.mapper)
         self.SetColor(color)
 
@@ -474,7 +474,7 @@ class Line(CamvtkActor):
         self.src.SetPoint1(p1)
         self.src.SetPoint2(p2)
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src.GetOutput())
+        self.mapper.SetInputConnection(self.src.GetOutputPort())
         self.SetMapper(self.mapper)
         self.SetColor(color)
 
@@ -514,7 +514,7 @@ class PolyLine(CamvtkActor):
         self.src=polydata
         
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src)
+        self.mapper.SetInputData(self.src)
         self.SetMapper(self.mapper)
         self.SetColor(color)
         polydata.Modified()
@@ -532,7 +532,7 @@ class Tube(CamvtkActor):
         self.src.SetPoint2(p2)
         
         self.tubefilter = vtk.vtkTubeFilter()
-        self.tubefilter.SetInput( self.src.GetOutput() )
+        self.tubefilter.SetInputConnection( self.src.GetOutputPort() )
         self.tubefilter.SetRadius( radius )
         self.tubefilter.SetNumberOfSides( 30 )
         self.tubefilter.Update()
@@ -591,13 +591,13 @@ class Tube(CamvtkActor):
         self.pdata.SetLines(lines)
 
         tubefilter=vtk.vtkTubeFilter()
-        tubefilter.SetInput(self.pdata)
+        tubefilter.SetInputData(self.pdata)
         tubefilter.SetRadius(radius)
         tubefilter.SetNumberOfSides(50)
         tubefilter.Update()
         
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(tubefilter.GetOutput())
+        self.mapper.SetInputConnection(tubefilter.GetOutputPort())
         self.SetMapper(self.mapper)
         self.SetColor(color)
 
@@ -612,7 +612,7 @@ class Point(CamvtkActor):
         self.src.SetNumberOfPoints(1)
 
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src.GetOutput())
+        self.mapper.SetInputConnection(self.src.GetOutputPort())
         self.SetMapper(self.mapper)
         self.SetColor(color)
 
@@ -635,7 +635,7 @@ class Arrow(CamvtkActor):
         
 
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput( transformFilter.GetOutput() )
+        self.mapper.SetInputConnection( transformFilter.GetOutputPort() )
         self.SetMapper(self.mapper)
         self.SetColor(color)
 
@@ -662,7 +662,7 @@ class Text(vtk.vtkTextActor):
 
     def SetText(self, text):
         """ set text to be displayed """
-        self.SetInput(text)
+        self.SetInputData(text)
         
     def SetSize(self, size):
         self.properties.SetFontSize(size)
@@ -711,7 +711,7 @@ class Axes(vtk.vtkActor):
         #self.src.SetCenter(center)
 
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src.GetOutput())
+        self.mapper.SetInputConnection(self.src.GetOutputPort())
         self.SetMapper(self.mapper)
 
         self.SetColor(color)
@@ -748,7 +748,7 @@ class Toroid(CamvtkActor):
         transformFilter.Update()
         
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(transformFilter.GetOutput())
+        self.mapper.SetInputConnection(transformFilter.GetOutputPort())
         self.SetMapper(self.mapper)
         self.SetColor(color)    
 
@@ -796,14 +796,15 @@ class STLSurf(CamvtkActor):
             triangle.GetPointIds().SetId(2,n)
             n=n+1
             triangles.InsertNextCell(triangle)
+
         polydata= vtk.vtkPolyData()
         polydata.SetPoints(points)
         polydata.SetPolys(triangles)
         polydata.Modified()
-        polydata.Update()
+        # polydata.Update()
         self.src=polydata
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src)
+        self.mapper.SetInputData(self.src)
         self.SetMapper(self.mapper)
             
 
@@ -842,7 +843,7 @@ class PointCloud(CamvtkActor):
         polydata.Update()
         self.src=polydata
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src)
+        self.mapper.SetInputData(self.src)
         self.SetMapper(self.mapper)
         #self.SetColor(color)
         
@@ -874,7 +875,7 @@ class CLPointCloud(CamvtkActor):
         polydata.Update()
         self.src=polydata
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src)
+        self.mapper.SetInputData(self.src)
         self.SetMapper(self.mapper)
         #self.SetColor(color)
 
@@ -885,7 +886,7 @@ class Plane(CamvtkActor):
         self.src = vtk.vtkPlaneSource()
         #self.src.SetCenter(center)
         self.mapper = vtk.vtkPolyDataMapper()
-        self.mapper.SetInput(self.src.GetOutput())
+        self.mapper.SetInputConnection(self.src.GetOutputPort())
         self.SetMapper(self.mapper)
 
         self.SetColor(color)
