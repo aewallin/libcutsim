@@ -41,6 +41,7 @@ BOOST_PYTHON_MODULE(libcutsim) {
     bp::class_<GLData>("GLData")
         .def("get_triangles", &GLData::get_triangles)
         .def("get_lines", &GLData::get_lines)
+        .def("get_stl", &GLData::get_stl)
 
         .def("__str__", &GLData::str)
     ;
