@@ -26,6 +26,8 @@
 
 #include <boost/foreach.hpp>
 #include <boost/python.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/case_conv.hpp> 
 
 #include "glvertex.hpp"
 
@@ -113,6 +115,7 @@ public:
     int addPolygon( std::vector<unsigned int>& verts);
     void removePolygon( unsigned int polygonIdx);
     std::string str();
+    boost::python::str get_stl(boost::python::str, bool);
     
     /// export triangle-list to python
     boost::python::list get_triangles() {
