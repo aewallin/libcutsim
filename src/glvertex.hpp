@@ -1,5 +1,6 @@
 /*  
  *  Copyright 2012 Anders Wallin (anders.e.e.wallin "at" gmail.com)
+ *  Copyright 2015      Kazuyasu Hamada (k-hamada@gifu-u.ac.jp)
  *  
  *  This file is part of libcutsim.
  *
@@ -159,6 +160,67 @@ struct GLVertex {
     /// dot product
     float dot(const GLVertex &p) const {
         return x*p.x + y*p.y + z*p.z;
+    }
+
+
+    /// rotate vertex by amount alfa around o->v axis 
+    void rotate(const GLVertex& origin, const GLVertex& v, float alfa) {
+        // rotate point p by alfa deg/rad around vector o->v
+        // p = o + M*(p-o)
+        float M[3][3];
+        float c = cos(alfa);
+        float D = 1.0 - c;
+        float s = sin(alfa);
+        M[0][0] = v.x*v.x*D+c; 
+        M[0][1] = v.y*v.x*D+v.z*s; 
+        M[0][2] = v.z*v.x*D-v.y*s;
+        M[1][0] = v.x*v.y*D-v.z*s;
+        M[1][1] = v.y*v.y*D+c;
+        M[1][2] = v.z*v.y*D+v.x*s;
+        M[2][0] = v.x*v.z*D+v.y*s;
+        M[2][1] = v.y*v.z*D-v.x*s;
+        M[2][2] = v.z*v.z*D+c;
+        // matrix multiply
+        float vector[3];
+        vector[0] = x - origin.x;
+        vector[1] = y - origin.y;
+        vector[2] = z - origin.z;
+        float result[3];
+        for (int i=0; i < 3; i++) {
+            result[i]=0;
+            for (int j=0; j < 3; j++) {
+                result[i]+=vector[j]*M[i][j];
+            }
+        }
+        x = origin.x + result[0];
+        y = origin.y + result[1];
+        z = origin.z + result[2];
+    }
+    /// rotate vertex around A and C axis
+    GLVertex rotateAC(const float a, const float c) {
+        float M[3][3];
+        float zC = cos(c);
+        float zS = sin(c);
+        float xC = cos(a);
+        float xS = sin(a);
+        M[0][0] =  zC;       M[0][1] = -zS;       M[0][2] = 0.0;
+        M[1][0] =  zS * xC;  M[1][1] =  zC * xC;  M[1][2] = -xS;
+        M[2][0] =  zS * xS;  M[2][1] =  zC * xS;  M[2][2] =  xC;
+        // matrix multiply
+        GLVertex result;
+        result.x = x * M[0][0] + y * M[0][1];
+        result.y = x * M[1][0] + y * M[1][1] + z * M[1][2];
+        result.z = x * M[2][0] + y * M[2][1] + z * M[2][2];
+        return result;
+    }
+    /// rotate vertex by A and C rotation matrix
+    GLVertex rotateAC(const float M[3][3]) {
+        // matrix multiply
+        GLVertex result;
+        result.x = x * M[0][0] + y * M[0][1];
+        result.y = x * M[1][0] + y * M[1][1] + z * M[1][2];
+        result.z = x * M[2][0] + y * M[2][1] + z * M[2][2];
+        return result;
     }
 
 };
