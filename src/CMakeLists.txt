@@ -13,6 +13,7 @@ if (CMAKE_BUILD_TOOL MATCHES "make")
     MESSAGE(STATUS "setting gcc options: -Wall -Werror -Wno-deprecated -pedantic-errors")
     add_definitions(-Wall  -Wno-deprecated -Werror -pedantic-errors -Wno-error=multichar )
     add_definitions(-fPIC)
+    add_definitions(-std=c++17) 
 endif (CMAKE_BUILD_TOOL MATCHES "make")
 
 option(BUILD_TYPE
