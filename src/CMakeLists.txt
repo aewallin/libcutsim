@@ -65,6 +65,7 @@ set( CUTSIM_SRC
 )
 
 set( CUTSIM_INCLUDE_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/facet.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octnode.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octree.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/volume.hpp
