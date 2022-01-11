@@ -65,7 +65,10 @@ BOOST_PYTHON_MODULE(libcutsim) {
     bp::class_< ConeVolume, bp::bases<Volume> >("ConeVolume")
         .def("setHeight", &ConeVolume::setHeight)
     ;
-    
+    bp::class_< MeshVolume, bp::bases<Volume> >("MeshVolume")
+    .def("loadMesh", &MeshVolume::loadMesh)
+    .def("setMeshCenter", &MeshVolume::setMeshCenter)
+    ;
     bp::class_<IsoSurfaceAlgorithm>("IsoSurfaceAlgorithm")
     ;
     bp::class_< MarchingCubes, bp::bases<IsoSurfaceAlgorithm> >("MarchingCubes")
