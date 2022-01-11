@@ -1,5 +1,6 @@
 /*  
  *  Copyright 2012 Anders Wallin (anders.e.e.wallin "at" gmail.com)
+ *  Copyright 2015      Kazuyasu Hamada (k-hamada@gifu-u.ac.jp)
  *  
  *  This file is part of libcutsim.
  *
@@ -21,6 +22,8 @@
 #include <cmath>
 
 #include "volume.hpp"
+
+#define TOLERANCE	(1e-2)
 
 namespace cutsim {
 
@@ -100,6 +103,183 @@ void ConeVolume::calcBB()  {
     GLVertex minpt = GLVertex(center.x - height*tan(alfa), center.y - height*tan(alfa), center.z );
     bb.addPoint( maxpt );
     bb.addPoint( minpt );
+}
+
+//************* STL **************/
+
+MeshVolume::MeshVolume() {
+    center = GLVertex(0, 0, 0);	// center is treated as the origin's offset of STL
+    rotationCenter = GLVertex(0, 0, 0);
+    angle  = GLVertex(0, 0, 0);
+}
+
+void MeshVolume::calcBB() {
+    GLVertex maxpt;
+    GLVertex minpt;
+    GLVertex centreDiff =  meshCenter - center;
+    // std::cout << "MeshVolume::calcBB() Center x:" << center.x << " y: " << center.y << " z: " << center.z << std::endl;
+    for (int i=0; i < (int)facets.size(); i++) {
+    	facets[i]->v1 += centreDiff; facets[i]->v2 += centreDiff; facets[i]->v3 += centreDiff;
+    	facets[i]->normal = facets[i]->normal.rotateAC(angle.x, angle.z);
+    	GLVertex v1p = facets[i]->v1 - rotationCenter;
+    	facets[i]->v1 = v1p.rotateAC(angle.x, angle.z) + rotationCenter;
+    	GLVertex v2p = facets[i]->v2 - rotationCenter;
+    	facets[i]->v2 = v2p.rotateAC(angle.x, angle.z) + rotationCenter;
+    	GLVertex v3p = facets[i]->v3 - rotationCenter;
+    	facets[i]->v3 = v3p.rotateAC(angle.x, angle.z) + rotationCenter;
+    }
+    if (facets.size()) {
+        maxpt.x = fmax(fmax(facets[0]->v1.x, facets[0]->v2.x),facets[0]->v3.x);
+        maxpt.y = fmax(fmax(facets[0]->v1.y, facets[0]->v2.y),facets[0]->v3.y);
+        maxpt.z = fmax(fmax(facets[0]->v1.z, facets[0]->v2.z),facets[0]->v3.z);
+        minpt.x = fmin(fmin(facets[0]->v1.x, facets[0]->v2.x),facets[0]->v3.x);
+        minpt.y = fmin(fmin(facets[0]->v1.y, facets[0]->v2.y),facets[0]->v3.y);
+        minpt.z = fmin(fmin(facets[0]->v1.z, facets[0]->v2.z),facets[0]->v3.z);
+    }
+    for (int i=0; i < (int)facets.size(); i++) {
+        maxpt.x = fmax(fmax(fmax(facets[i]->v1.x, facets[i]->v2.x),facets[i]->v3.x), maxpt.x);
+        maxpt.y = fmax(fmax(fmax(facets[i]->v1.y, facets[i]->v2.y),facets[i]->v3.y), maxpt.y);
+        maxpt.z = fmax(fmax(fmax(facets[i]->v1.z, facets[i]->v2.z),facets[i]->v3.z), maxpt.z);
+        minpt.x = fmin(fmin(fmin(facets[i]->v1.x, facets[i]->v2.x),facets[i]->v3.x), minpt.x);
+        minpt.y = fmin(fmin(fmin(facets[i]->v1.y, facets[i]->v2.y),facets[i]->v3.y), minpt.y);
+        minpt.z = fmin(fmin(fmin(facets[i]->v1.z, facets[i]->v2.z),facets[i]->v3.z), minpt.z);
+        V21.push_back(facets[i]->v2 - facets[i]->v1);
+        invV21dotV21.push_back(1.0/(facets[i]->v2 - facets[i]->v1).dot(facets[i]->v2 - facets[i]->v1));
+        V32.push_back(facets[i]->v3 - facets[i]->v2);
+        invV32dotV32.push_back(1.0/(facets[i]->v3 - facets[i]->v2).dot(facets[i]->v3 - facets[i]->v2));
+        V13.push_back(facets[i]->v1 - facets[i]->v3);
+        invV13dotV13.push_back(1.0/(facets[i]->v1 - facets[i]->v3).dot(facets[i]->v1 - facets[i]->v3));
+    }
+    bb.clear();
+    maxpt += GLVertex(TOLERANCE, TOLERANCE, TOLERANCE);
+    minpt -= GLVertex(TOLERANCE, TOLERANCE, TOLERANCE);
+    // std::cout << "STL maxpt x:" << maxpt.x << " y: " << maxpt.y << " z:" << maxpt.z  << "\n";
+    // std::cout << "STL minpt x:" << minpt.x << " y: " << minpt.y << " z:" << minpt.z  << "\n";
+    center = meshCenter;
+    bb.addPoint( maxpt );
+    bb.addPoint( minpt );
+}
+
+float MeshVolume::dist(const GLVertex& p) const {
+	GLVertex q, r;
+	GLVertex n1, n2, n3;
+	double s12, s23, s31;
+	float min = 1.0e+3, d, ret = -1.0, u, abs_d;
+	for (int i=0; i < (int)facets.size(); i++) {
+		u = (p - facets[i]->v1).dot(V21[i]) * invV21dotV21[i];
+		q = facets[i]->v1 + V21[i] * u;
+		d = (q - p).dot(facets[i]->normal);
+		if ((abs_d = fabs(d)) > min) continue;
+		r = p + facets[i]->normal * d;
+		n1 = (r - facets[i]->v1).cross(V13[i]);
+		n2 = (r - facets[i]->v2).cross(V21[i]);
+		n3 = (r - facets[i]->v3).cross(V32[i]);
+		s12 = n1.dot(n2); s23 = n2.dot(n3); s31 = n3.dot(n1);
+
+		if ((s12 * s31 > 0.0) && (s12 * s23 > 0.0) && (s23 * s31 > 0.0))
+			if (abs_d < min) {
+				min = abs_d;
+				ret = d;
+				continue;
+			}
+
+		if (s12 <= 0.0 && s31 >= 0.0) {
+			if (u > 0.0 && u < 1.0)
+				/*q21 = q*/;
+			else if (u <= 0.0)
+				q = facets[i]->v1;
+			else
+				q = facets[i]->v2;
+			abs_d = (q - p).norm();
+			if (abs_d < min) {
+				d = (q - p).dot(facets[i]->normal);
+				if (d > 0.0 + TOLERANCE) {
+					min = abs_d + TOLERANCE;
+					ret = abs_d;
+				} else {
+					min = abs_d;
+					ret = -abs_d;
+				}
+			}
+		} else if (s31 <= 0.0 && s23 >= 0.0) {
+			u = (p - facets[i]->v3).dot(V13[i]) * invV13dotV13[i];
+			if (u > 0.0 && u < 1.0)
+				q = facets[i]->v3 + V13[i] * u;
+			else if (u <= 0.0)
+				q = facets[i]->v3;
+			else
+				q = facets[i]->v1;
+			abs_d = (q - p).norm();
+			if (abs_d < min) {
+				d = (q - p).dot(facets[i]->normal);
+				if (d > 0.0 + TOLERANCE) {
+					min = abs_d + TOLERANCE;
+					ret = abs_d;
+				} else {
+					min = abs_d;
+					ret = -abs_d;
+				}
+			}
+		} else if (s23 <= 0.0 && s12 >= 0.0) {
+			u = (p - facets[i]->v2).dot(V32[i]) * invV32dotV32[i];
+			if (u > 0.0 && u < 1.0)
+				q = facets[i]->v2 + V32[i] * u;
+			else if (u <= 0.0)
+				q = facets[i]->v2;
+			else
+				q = facets[i]->v3;
+			abs_d = (q - p).norm();
+			if (abs_d < min) {
+				d = (q - p).dot(facets[i]->normal);
+				if (d > 0.0 + TOLERANCE) {
+					min = abs_d + TOLERANCE;
+					ret = abs_d;
+				} else {
+					min = abs_d;
+					ret = -abs_d;
+				}
+			}
+		}
+	}
+    //std::cout << " STL dist " << ret << std::endl;
+	return ret;		// positive inside. negative outside.
+}
+
+void MeshVolume::loadMesh(boost::python::list facets){
+
+    boost::python::ssize_t len = boost::python::len(facets);
+    std::cout << " Load Mesh Shape from " << len << " Facets" << std::endl;
+
+	// expected input
+	// [[(normal),(v1), (v2), (v3)],...]
+
+	GLVertex vertexData [4] = {};
+
+    for(int i=0; i<len; i++){
+		boost::python::ssize_t dataLen = boost::python::len(facets[i]);
+		if (dataLen == 4){
+				// std::cout << " Loading Data from facet:" << i << std::endl;
+				for(int j=0; j<dataLen; j++){
+				
+					float f0 = boost::python::extract<float>(facets[i][j][0]);
+					float f1 = boost::python::extract<float>(facets[i][j][1]);
+					float f2 = boost::python::extract<float>(facets[i][j][2]);
+
+					// std::cout << "Facet " << i << " vertex " << j << " x " << f0 << " y " << f1 << " z " << f2 << std::endl;
+
+					vertexData[j].x = f0;
+					vertexData[j].y = f1;
+					vertexData[j].z = f2;
+			}
+
+			// std::cout << " Add Facet " << i << std::endl;
+			addFacet(new Facet(vertexData[0], vertexData[1], vertexData[2], vertexData[3]));
+
+		}
+    }
+
+	calcBB();
+
 }
 
 } // end namespace

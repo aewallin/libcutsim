@@ -1,5 +1,6 @@
 /*  
  *  Copyright 2012 Anders Wallin (anders.e.e.wallin "at" gmail.com)
+ *  Copyright 2015      Kazuyasu Hamada (k-hamada@gifu-u.ac.jp)
  *  
  *  This file is part of libcutsim.
  *
@@ -24,6 +25,7 @@
 #include <cassert>
 
 #include "bbox.hpp"
+#include "facet.hpp"
 #include "glvertex.hpp"
 #include "gldata.hpp"
 
@@ -127,6 +129,77 @@ class ConeVolume: public Volume {
 // DATA
         float height;  ///< height of cone
         float alfa;    ///< half-angle of cone
+};
+
+/// STL volume
+class MeshVolume: public Volume {
+
+    public:
+        MeshVolume();
+        virtual ~MeshVolume() {
+        	V21.resize(0); invV21dotV21.resize(0);
+        	V32.resize(0); invV32dotV32.resize(0);
+        	V13.resize(0); invV13dotV13.resize(0);
+            facets.resize(0);
+        }
+
+
+        void addFacet(Facet *f)	{ facets.push_back(f); }
+
+        /// set the center of STL
+        void setCenter(GLVertex v) {
+            center = v;
+        }
+
+        /// set the target center of STL
+        void setMeshCenter(float x, float y, float z){
+        // std::cout << "MeshVolume setMeshCenter" << std::endl;
+        // setCenter(GLVertex(x, y, z));
+        meshCenter = GLVertex(x, y, z);
+        calcBB();
+
+        }
+        /// set the rotation center of STL
+        void setRotationCenter(GLVertex c) {
+            rotationCenter = c;
+        }
+        /// set the angle of STL
+        void setAngle(GLVertex a) {
+            angle = a;
+        }
+        /// update the bounding-box of STL
+        void calcBB();
+
+        virtual float dist(const GLVertex& p) const;
+
+        // load mesh from facet data
+        void loadMesh(boost::python::list);
+
+       // int readStlFile(QString file) {  int retval = Stl::readStlFile(file); calcBB(); return retval; }
+
+    private:
+        // V21[i] = facets[i]->v2 - facets[i]->v1
+        std::vector<GLVertex> V21;
+        // 1/<V21[i], V21[i]>
+        std::vector<double> invV21dotV21;
+        // V32[i] = facets[i]->v3 - facets[i]->v2
+        std::vector<GLVertex> V32;
+        // 1/<V32[i], V32[i]>
+        std::vector<double> invV32dotV32;
+        // V13[i] = facets[i]->v1 - facets[i]->v3
+        std::vector<GLVertex> V13;
+        // 1/<V13[i], V13[i]>
+        std::vector<double> invV13dotV13;
+        /// STL center
+        GLVertex center;
+        /// STL Target Center
+        GLVertex meshCenter;
+        /// center of rotation
+        GLVertex rotationCenter;
+        /// STL angle
+        GLVertex angle;
+        // facets
+        std::vector<Facet*> facets;
 };
 
 
