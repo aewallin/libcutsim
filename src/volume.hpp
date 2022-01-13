@@ -173,8 +173,10 @@ class MeshVolume: public Volume {
         virtual float dist(const GLVertex& p) const;
 
         // load mesh from facet data
-        void loadMesh(boost::python::list);
+        bool loadMesh(boost::python::list);
+        // load mesh from stl file
         bool loadStl(boost::python::str);
+
         GLVertex parseStlData(std::ifstream&);
 
        // int readStlFile(QString file) {  int retval = Stl::readStlFile(file); calcBB(); return retval; }

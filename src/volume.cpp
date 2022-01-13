@@ -20,6 +20,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <fstream>
 
 #include "volume.hpp"
 
@@ -245,13 +246,20 @@ float MeshVolume::dist(const GLVertex& p) const {
 	return ret;		// positive inside. negative outside.
 }
 
-void MeshVolume::loadMesh(boost::python::list facets){
-
-    boost::python::ssize_t len = boost::python::len(facets);
-    std::cout << " Load Mesh Shape from " << len << " Facets" << std::endl;
-
+bool MeshVolume::loadMesh(boost::python::list facets){
+	// Load mesh data from python facets
 	// expected input
 	// [[(normal),(v1), (v2), (v3)],...]
+	// TODO: check the face data structure is valid
+
+    boost::python::ssize_t len = boost::python::len(facets);
+
+    if (!len) {
+        std::cout << "Mesh data invalid" << std::endl;
+		return false;
+    }
+
+    std::cout << " Load Mesh Shape from " << len << " Facets" << std::endl;
 
 	GLVertex vertexData [4] = {};
 
@@ -272,13 +280,17 @@ void MeshVolume::loadMesh(boost::python::list facets){
 					vertexData[j].z = f2;
 			}
 
-			// std::cout << " Add Facet " << i << std::endl;
 			addFacet(new Facet(vertexData[0], vertexData[1], vertexData[2], vertexData[3]));
 
 		}
     }
 
+	// calculate the bounding box of the mesh volume
 	calcBB();
+	// file loaded successfully, return true
+	return true;
+
+}
 
 bool MeshVolume::loadStl(boost::python::str fPath){
 	// Load mesh data from binary stl file
