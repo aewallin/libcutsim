@@ -68,6 +68,7 @@ BOOST_PYTHON_MODULE(libcutsim) {
     bp::class_< MeshVolume, bp::bases<Volume> >("MeshVolume")
     .def("loadMesh", &MeshVolume::loadMesh)
     .def("setMeshCenter", &MeshVolume::setMeshCenter)
+        .def("loadStl", &MeshVolume::loadStl)
     ;
     bp::class_<IsoSurfaceAlgorithm>("IsoSurfaceAlgorithm")
     ;

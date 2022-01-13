@@ -280,6 +280,74 @@ void MeshVolume::loadMesh(boost::python::list facets){
 
 	calcBB();
 
+bool MeshVolume::loadStl(boost::python::str fPath){
+	// Load mesh data from binary stl file
+
+	std::cout << "Loading Data From STL File" << std::endl;
+
+    std::string filePath = boost::python::extract<std::string>(fPath);
+	std::ifstream stlFile(filePath.c_str(), std::ios::in | std::ios::binary);
+
+    if (!stlFile) {
+        std::cout << "Error reading file" << std::endl;
+        assert(!stlFile);
+		return false;
+    }
+
+    char headerData[80] = "";
+    char triangleData[4];
+    stlFile.read(headerData, 80);
+    stlFile.read(triangleData, 4);
+	
+    //std::string headerString(headerData);
+	//std::cout << headerString << std::endl;
+
+	// cast triangleData to an unsigned int
+	unsigned int triangleCount = static_cast<unsigned int>( *triangleData);
+
+	std::cout << "Importing " << triangleCount << " Triangles" << std::endl;
+
+	if (!triangleCount) {
+        std::cout << "Error reading data" << std::endl;
+        assert(!triangleCount);
+		return false;
+    }
+
+    for (unsigned int i = 0; i < triangleCount; i++) {
+        
+		GLVertex normal = parseStlData(stlFile);
+		GLVertex v1 = parseStlData(stlFile);
+		GLVertex v2 = parseStlData(stlFile);
+		GLVertex v3 = parseStlData(stlFile);
+
+		addFacet(new Facet(normal, v1, v2, v3));
+
+        char attribute[2];
+        stlFile.read(attribute, 2);
+    }
+
+	// calculate the bounding box of the mesh volume
+	calcBB();
+	// file loaded successfully, return true
+	return true;
+}
+
+GLVertex MeshVolume::parseStlData(std::ifstream& stlFile){
+
+		// parse the stl data to a GLVertex and return
+		// TODO: error checking required
+		// valid numerical data?
+
+	    float x;
+		stlFile.read(reinterpret_cast<char*>(&x), sizeof(float));
+    	float y;
+		stlFile.read(reinterpret_cast<char*>(&y), sizeof(float));
+    	float z;
+		stlFile.read(reinterpret_cast<char*>(&z), sizeof(float));
+
+		// std::cout << " parseStlData - X:" << x << " Y:" << y << " Z:" << z << std::endl;
+
+		return GLVertex(x,y,z);
 }
 
 } // end namespace

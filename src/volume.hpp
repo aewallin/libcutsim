@@ -174,6 +174,8 @@ class MeshVolume: public Volume {
 
         // load mesh from facet data
         void loadMesh(boost::python::list);
+        bool loadStl(boost::python::str);
+        GLVertex parseStlData(std::ifstream&);
 
        // int readStlFile(QString file) {  int retval = Stl::readStlFile(file); calcBB(); return retval; }
 
