@@ -10,12 +10,12 @@ def main():
 
     gl = libcutsim.GLData()  # this class holds lines, triangles, or quads for OpenGL drawing
     iso = libcutsim.MarchingCubes() # this is the algorithm that produces GLData from the stock-model
-    cs = libcutsim.Cutsim(200.0, 9, gl, iso) # this is the cutting simulation
+    cs = libcutsim.Cutsim(200.0, 10, gl, iso) # this is the cutting simulation
     cs.init(3) # initialize by subdividing octree n-times
 
     # define path to the stl file
     dir = os.path.dirname(__file__)
-    file_name = "libcutsim_import.stl"
+    file_name = "libcutsim_ascii_import.stl"
     file_path = dir + os.sep + file_name
 
     print("Importing: ", file_path)
@@ -38,15 +38,12 @@ def main():
     y = -1
     for n in range(Nmax):
         y = 0.1*n
-        print("position:", x, y)
+        # print("position:", x, y)
         cutter.setCenter(x,y,10.5)
         cs.diff_volume(cutter) # subtract the volume from the stock
-        #cs.updateGL()
     t_after = time.time()
     print(Nmax, " diff() calls took ", t_after-t_before," seconds")
     cs.updateGL()
-    #cs.updateGL()
-
 
     # create a VTK view for drawing
     w=1024
