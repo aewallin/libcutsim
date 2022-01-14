@@ -21,6 +21,7 @@
 #include <cassert>
 #include <cmath>
 #include <fstream>
+#include<boost/algorithm/string.hpp>
 
 #include "volume.hpp"
 
@@ -298,46 +299,134 @@ bool MeshVolume::loadStl(boost::python::str fPath){
 	std::cout << "Loading Data From STL File" << std::endl;
 
     std::string filePath = boost::python::extract<std::string>(fPath);
-	std::ifstream stlFile(filePath.c_str(), std::ios::in | std::ios::binary);
 
-    if (!stlFile) {
-        std::cout << "Error reading file" << std::endl;
-        assert(!stlFile);
-		return false;
-    }
+	/// Open file to check if its an ASCII file
 
-    char headerData[80] = "";
-    char triangleData[4];
-    stlFile.read(headerData, 80);
-    stlFile.read(triangleData, 4);
+	std::string line;
+	std::ifstream stlFile (filePath);
+	bool binaryFile = false;
 	
-    //std::string headerString(headerData);
-	//std::cout << headerString << std::endl;
 
-	// cast triangleData to an unsigned int
-	unsigned int triangleCount = static_cast<unsigned int>( *triangleData);
+	if (stlFile.is_open())
+	{
+		getline(stlFile,line);
+		// ASCII stl files should begin with the word 'solid'
+		// Check if the first line of the file contains 'solid'
+		if (!boost::algorithm::contains(line, "solid"))
+		{
+			binaryFile = true;
+			stlFile.close();
+		}
 
-	std::cout << "Importing " << triangleCount << " Triangles" << std::endl;
+		if (!binaryFile){
 
-	if (!triangleCount) {
-        std::cout << "Error reading data" << std::endl;
-        assert(!triangleCount);
-		return false;
-    }
+			GLVertex v, n;
+			std::vector<GLVertex> vertices;
+			int vertexTracker = 0;
+			int vertexTotal = 0;
+			int facetTotal = 0;
+			std::string stlString;
 
-    for (unsigned int i = 0; i < triangleCount; i++) {
-        
-		GLVertex normal = parseStlData(stlFile);
-		GLVertex v1 = parseStlData(stlFile);
-		GLVertex v2 = parseStlData(stlFile);
-		GLVertex v3 = parseStlData(stlFile);
+			while ( getline(stlFile,line) )
+			{
+				// Typical facet definition
 
-		addFacet(new Facet(normal, v1, v2, v3));
+				//  facet normal -0.000000 -1.000000 -0.000000
+				//    outer loop
+				//      vertex 100.000000 0.000000 10.000000
+				//      vertex 0.000000 0.000000 10.000000
+				//      vertex 100.000000 0.000000 0.000000
+				//    endloop
+				//  endfacet
 
-        char attribute[2];
-        stlFile.read(attribute, 2);
-    }
+				/// normal
+				stlString = "facet normal";
+				if (boost::algorithm::contains(line, stlString)){
+					n = parseStlLine(line, stlString);
+				}
 
+				/// vertex
+				stlString = "vertex";
+				if (boost::algorithm::contains(line, stlString)){
+					v = parseStlLine(line, stlString);
+					vertices.push_back(v);
+					vertexTotal++;
+					vertexTracker++;
+				}
+
+				//endfacet
+				stlString = "endfacet";
+				if (boost::algorithm::contains(line, stlString)){
+					if (vertices.size() == 3){
+						addFacet(new Facet(n, vertices[0], vertices[1], vertices[2]));
+					}else{
+						//TODO: handle processing errors
+						std::cout << "Error processing vertex" << std::endl;
+					}
+					vertexTracker = 0;
+					vertices.clear();
+					facetTotal++;
+				}
+
+				//endsolid
+				stlString = "endsolid";
+				if (boost::algorithm::contains(line, stlString)){
+					std::cout << "stl import complete - processed " << facetTotal << " facets, with " << vertexTotal << " vertices" << std::endl;
+				}
+			}
+		}
+	}else{
+		//TODO: handle processing errors
+		std::cout << "Error opening stl file" << std::endl;
+	}
+
+	/// Binary 
+	if (binaryFile){
+
+		std::ifstream stlFile(filePath.c_str(), std::ios::in | std::ios::binary);
+
+		if (!stlFile) {
+			std::cout << "Error reading file" << std::endl;
+			assert(!stlFile);
+			return false;
+		}
+
+		char headerData[80] = "";
+		char triangleData[4];
+		stlFile.read(headerData, 80);
+		stlFile.read(triangleData, 4);
+		
+		std::string headerString(headerData);
+		//TODO: The header may contain ASCII string for units
+		// see: https://en.wikipedia.org/wiki/STL_(file_format)#ASCII_STL
+		std::cout << "STL Header: " << headerString << std::endl;
+
+		// cast triangleData to an unsigned int
+		unsigned int triangleCount = static_cast<unsigned int>( *triangleData);
+
+		std::cout << "Importing " << triangleCount << " Triangles" << std::endl;
+
+		if (!triangleCount) {
+			std::cout << "Error reading data" << std::endl;
+			assert(!triangleCount);
+			return false;
+		}
+
+		for (unsigned int i = 0; i < triangleCount; i++) {
+			
+			GLVertex normal = parseStlData(stlFile);
+			GLVertex v1 = parseStlData(stlFile);
+			GLVertex v2 = parseStlData(stlFile);
+			GLVertex v3 = parseStlData(stlFile);
+
+			addFacet(new Facet(normal, v1, v2, v3));
+
+			char attribute[2];
+			stlFile.read(attribute, 2);
+		}
+	}
+
+	stlFile.close();
 	// calculate the bounding box of the mesh volume
 	calcBB();
 	// file loaded successfully, return true
@@ -345,21 +434,39 @@ bool MeshVolume::loadStl(boost::python::str fPath){
 }
 
 GLVertex MeshVolume::parseStlData(std::ifstream& stlFile){
+	// parse the binary stl data to a GLVertex and return
+	// TODO: error checking required
+	// valid numerical data?
 
-		// parse the stl data to a GLVertex and return
-		// TODO: error checking required
-		// valid numerical data?
+	float x;
+	stlFile.read(reinterpret_cast<char*>(&x), sizeof(float));
+	float y;
+	stlFile.read(reinterpret_cast<char*>(&y), sizeof(float));
+	float z;
+	stlFile.read(reinterpret_cast<char*>(&z), sizeof(float));
 
-	    float x;
-		stlFile.read(reinterpret_cast<char*>(&x), sizeof(float));
-    	float y;
-		stlFile.read(reinterpret_cast<char*>(&y), sizeof(float));
-    	float z;
-		stlFile.read(reinterpret_cast<char*>(&z), sizeof(float));
+	return GLVertex(x,y,z);
+}
 
-		// std::cout << " parseStlData - X:" << x << " Y:" << y << " Z:" << z << std::endl;
+GLVertex MeshVolume::parseStlLine(std::string line, std::string stlString){
+	// parse the ascii stl line to a GLVertex and return
+	// TODO: error checking required
+	// valid numerical data?
 
-		return GLVertex(x,y,z);
+	boost::algorithm::replace_all(line, stlString, "");
+	boost::algorithm::trim(line);
+	std::vector<std::string> strVec;
+	strVec = boost::algorithm::split(strVec, line, boost::algorithm::is_space());
+
+	GLVertex vertex;
+	if (strVec.size() == 3)
+	{
+		vertex.x = std::stof(strVec[0]);
+		vertex.y = std::stof(strVec[1]);
+		vertex.z = std::stof(strVec[2]);
+	}
+
+	return vertex;
 }
 
 } // end namespace

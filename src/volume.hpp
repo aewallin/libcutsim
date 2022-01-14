@@ -178,6 +178,7 @@ class MeshVolume: public Volume {
         bool loadStl(boost::python::str);
 
         GLVertex parseStlData(std::ifstream&);
+        GLVertex parseStlLine(std::string, std::string);
 
        // int readStlFile(QString file) {  int retval = Stl::readStlFile(file); calcBB(); return retval; }
 
