@@ -29,11 +29,12 @@
 namespace cutsim {
 
 FileIO::FileIO(){
-    std::cout << "FileIO object created" << std::endl;
+    //std::cout << "FileIO object created" << std::endl;
 }
 
 FileIO::~FileIO(){
-	std::cout << "FileIO object destroyed" << std::endl;
+	//std::cout << "FileIO object destroyed" << std::endl;
+	facets.clear();
 }
 
 std::vector<Facet*> FileIO::getFacets(){
@@ -48,8 +49,10 @@ bool FileIO::loadStl(boost::python::str fPath){
 	std::cout << "Loading Data From STL File" << std::endl;
     std::string filePath = boost::python::extract<std::string>(fPath);
 
-	/// Open file to check if its an ASCII file
+	// clear the facets
+	facets.clear();
 
+	/// Open file to check if its an ASCII file
 	std::string line;
 	std::ifstream stlFile (filePath);
 	bool binaryFile = false;
@@ -225,6 +228,9 @@ bool FileIO::loadMesh(boost::python::list pyfacets){
 	// expected input
 	// [[(normal),(v1), (v2), (v3)],...]
 	// TODO: check the face data structure is valid
+
+	// clear the facets
+	facets.clear();
 
     boost::python::ssize_t len = boost::python::len(pyfacets);
 
