@@ -28,57 +28,67 @@
 #include "octnode.hpp"
 #include "volume.hpp"
 
-namespace cutsim {
+namespace cutsim
+{
 
-//**************** Octree ********************/
+    //**************** Octree ********************/
 
-Octree::Octree(double scale, unsigned int  depth, GLVertex& centerp, GLData* gl) {
-    root_scale = scale;
-    max_depth = depth;
-    g = gl;
-                    // parent, idx, scale, depth
-    root = new Octnode( NULL , 0, root_scale, 0 , g);
-    root->center = new GLVertex(centerp);
-    for ( int n=0;n<8;++n) {
-        root->child[n] = NULL;
+    Octree::Octree(double scale, unsigned int depth, GLVertex &centerp, GLData *gl)
+    {
+        root_scale = scale;
+        max_depth = depth;
+        g = gl;
+        // parent, idx, scale, depth
+        root = new Octnode(NULL, 0, root_scale, 0, g);
+        root->center = new GLVertex(centerp);
+        for (int n = 0; n < 8; ++n)
+        {
+            root->child[n] = NULL;
+        }
+        debug = false;
+        debug_mc = false;
     }
-    debug = false;
-    debug_mc = false;
-}
 
-Octree::~Octree() {
-    delete root;
-    root = 0;
-}
+    Octree::~Octree()
+    {
+        delete root;
+        root = 0;
+    }
 
-unsigned int Octree::get_max_depth() const {
-    return max_depth;
-}
+    unsigned int Octree::get_max_depth() const
+    {
+        return max_depth;
+    }
 
-double Octree::get_root_scale() const {
-    return root_scale;
-}
+    double Octree::get_root_scale() const
+    {
+        return root_scale;
+    }
 
-double Octree::leaf_scale() const {
-    return (2.0*root_scale) / pow(2.0, (int)max_depth );
-}
-        
-/// subdivide the Octree n times
-void Octree::init(const unsigned int n) {
-    for (unsigned int m=0;m<n;++m) {
-        std::vector<Octnode*> nodelist;
-        get_leaf_nodes(root, nodelist);
-        BOOST_FOREACH( Octnode* node, nodelist) {
-            node->force_subdivide();
+    double Octree::leaf_scale() const
+    {
+        return (2.0 * root_scale) / pow(2.0, (int)max_depth);
+    }
+
+    /// subdivide the Octree n times
+    void Octree::init(const unsigned int n)
+    {
+        for (unsigned int m = 0; m < n; ++m)
+        {
+            std::vector<Octnode *> nodelist;
+            get_leaf_nodes(root, nodelist);
+            BOOST_FOREACH (Octnode *node, nodelist)
+            {
+                node->force_subdivide();
+            }
         }
     }
-}
-/*
+    /*
 void Octree::get_invalid_leaf_nodes( std::vector<Octnode*>& nodelist) const {
     get_invalid_leaf_nodes( root, nodelist );
 }*/
 
-/*
+    /*
 void Octree::get_invalid_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const {
     if ( current->childcount == 0 ) {
         if ( !current->valid() ) {
@@ -93,24 +103,28 @@ void Octree::get_invalid_leaf_nodes(Octnode* current, std::vector<Octnode*>& nod
             }
         }
     }
-} */  
+} */
 
+    /// put leaf nodes into nodelist
 
-/// put leaf nodes into nodelist
-
-void Octree::get_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const {
-    if ( current->isLeaf() ) {
-        nodelist.push_back( current );
-    } else {
-        for ( int n=0;n<8;++n) {
-            if ( current->child[n] != 0 )
-                get_leaf_nodes( current->child[n], nodelist );
+    void Octree::get_leaf_nodes(Octnode *current, std::vector<Octnode *> &nodelist) const
+    {
+        if (current->isLeaf())
+        {
+            nodelist.push_back(current);
+        }
+        else
+        {
+            for (int n = 0; n < 8; ++n)
+            {
+                if (current->child[n] != 0)
+                    get_leaf_nodes(current->child[n], nodelist);
+            }
         }
     }
-}
 
-/// put all nodes into nodelist
-/*
+    /// put all nodes into nodelist
+    /*
 void Octree::get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const {
     if ( current ) {
         nodelist.push_back( current );
@@ -121,91 +135,114 @@ void Octree::get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) co
     }
 }*/
 
-// sum (union) of tree and OCTVolume
-void Octree::sum(Octnode* current, const Volume* vol) {
-    if ( !vol->bb.overlaps( current->bb ) || current->is_inside() ) // if no overlap, or already INSIDE, then quit.
-        return; // abort if no overlap.
-    
-    current->sum(vol);
-    if ( (current->childcount == 8) && current->is_undecided()  ) { // recurse into existing tree
-        for(int m=0;m<8;++m) {
-            if ( !current->child[m]->is_inside()  ) // nodes that are already INSIDE cannot change in a sum-operation
-                sum( current->child[m], vol); // call sum on children
-        }
-    } else if ( current->is_undecided() ) { // no children, subdivide if undecided
-        if ( (current->depth < (this->max_depth-1)) ) {
-            current->subdivide(); // smash into 8 sub-pieces
-            for(int m=0;m<8;++m) 
-                sum( current->child[m], vol); // call sum on children
-        }
-    }
-    // now all children of current have their status set, and we can prune.
-    if ( (current->childcount == 8) && ( current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE) ) ) {
-        current->delete_children();
-    }
-}
+    // sum (union) of tree and OCTVolume
+    void Octree::sum(Octnode *current, const Volume *vol)
+    {
+        if (!vol->bb.overlaps(current->bb) || current->is_inside()) // if no overlap, or already INSIDE, then quit.
+            return;                                                 // abort if no overlap.
 
-
-void Octree::diff(Octnode* current, const Volume* vol) {
-    if ( !vol->bb.overlaps( current->bb ) || current->is_outside() ) {
-        //std::cout << vol->center.x << "," << vol->center.y << "," << vol->center.z << " overlaps? " << vol->bb.overlaps( current->bb ) << "\n";
-        return;  // if no overlap, or already OUTSIDE, then quit.  
-    }
-    
-    current->diff(vol);
-    if ( vol->bb.overlaps( current->bb )  || current->bb.overlaps( vol->bb ) )
-        current->setUndecided();
-        
-    if ( ((current->childcount) == 8) && (current->is_undecided()  ) ) { // recurse into existing tree
-        for(int m=0;m<8;++m) {
-            //if ( !current->child[m]->is_outside()  ) // nodes that are OUTSIDE don't change
-                diff( current->child[m], vol); // call diff on children
-        }
-    } else if ( (current->is_undecided() )  ) { // no children, subdivide if undecided 
-        if ( (current->depth < (this->max_depth-1)) ) {
-            current->subdivide(); // smash into 8 sub-pieces
-            for(int m=0;m<8;++m) {
-                diff( current->child[m], vol); // call diff on children
+        current->sum(vol);
+        if ((current->childcount == 8) && current->is_undecided())
+        { // recurse into existing tree
+            for (int m = 0; m < 8; ++m)
+            {
+                if (!current->child[m]->is_inside()) // nodes that are already INSIDE cannot change in a sum-operation
+                    sum(current->child[m], vol);     // call sum on children
             }
         }
-    }
-    
-    // now all children have their status set, prune.
-    if ( (current->childcount == 8) && ( current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE) ) ) {
-        current->delete_children();
-    }
-}
-
-void Octree::intersect(Octnode* current, const Volume* vol) {
-    if (   current->is_outside() ) // if already OUTSIDE, then quit.
-        return;   
-    
-    current->intersect(vol);
-    if ( ((current->childcount) == 8) && current->is_undecided() ) { // recurse into existing tree
-        for(int m=0;m<8;++m) {
-            //if ( !current->child[m]->is_outside()  ) // nodes that are OUTSIDE don't change
-                intersect( current->child[m], vol); // call diff on children
-        }
-    } else if (  current->is_undecided() ) { // no children, subdivide if undecided 
-        if ( (current->depth < (this->max_depth-1)) ) {
-            current->subdivide(); // smash into 8 sub-pieces
-            for(int m=0;m<8;++m) {
-                intersect( current->child[m], vol); // call diff on children
+        else if (current->is_undecided())
+        { // no children, subdivide if undecided
+            if ((current->depth < (this->max_depth - 1)))
+            {
+                current->subdivide(); // smash into 8 sub-pieces
+                for (int m = 0; m < 8; ++m)
+                    sum(current->child[m], vol); // call sum on children
             }
         }
+        // now all children of current have their status set, and we can prune.
+        if ((current->childcount == 8) && (current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE)))
+        {
+            current->delete_children();
+        }
     }
-    // now all children have their status set, prune.
-    if ( (current->childcount == 8) && ( current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE) ) ) {
-        current->delete_children();
+
+    void Octree::diff(Octnode *current, const Volume *vol)
+    {
+        if (!vol->bb.overlaps(current->bb) || current->is_outside())
+        {
+            //std::cout << vol->center.x << "," << vol->center.y << "," << vol->center.z << " overlaps? " << vol->bb.overlaps( current->bb ) << "\n";
+            return; // if no overlap, or already OUTSIDE, then quit.
+        }
+
+        current->diff(vol);
+        if (vol->bb.overlaps(current->bb) || current->bb.overlaps(vol->bb))
+            current->setUndecided();
+
+        if (((current->childcount) == 8) && (current->is_undecided()))
+        { // recurse into existing tree
+            for (int m = 0; m < 8; ++m)
+            {
+                //if ( !current->child[m]->is_outside()  ) // nodes that are OUTSIDE don't change
+                diff(current->child[m], vol); // call diff on children
+            }
+        }
+        else if ((current->is_undecided()))
+        { // no children, subdivide if undecided
+            if ((current->depth < (this->max_depth - 1)))
+            {
+                current->subdivide(); // smash into 8 sub-pieces
+                for (int m = 0; m < 8; ++m)
+                {
+                    diff(current->child[m], vol); // call diff on children
+                }
+            }
+        }
+
+        // now all children have their status set, prune.
+        if ((current->childcount == 8) && (current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE)))
+        {
+            current->delete_children();
+        }
     }
-}
 
+    void Octree::intersect(Octnode *current, const Volume *vol)
+    {
+        if (current->is_outside()) // if already OUTSIDE, then quit.
+            return;
 
-// string repr
-std::string Octree::str() const {
-    std::ostringstream o;
-    o << " Octree: ";
-    /*
+        current->intersect(vol);
+        if (((current->childcount) == 8) && current->is_undecided())
+        { // recurse into existing tree
+            for (int m = 0; m < 8; ++m)
+            {
+                //if ( !current->child[m]->is_outside()  ) // nodes that are OUTSIDE don't change
+                intersect(current->child[m], vol); // call diff on children
+            }
+        }
+        else if (current->is_undecided())
+        { // no children, subdivide if undecided
+            if ((current->depth < (this->max_depth - 1)))
+            {
+                current->subdivide(); // smash into 8 sub-pieces
+                for (int m = 0; m < 8; ++m)
+                {
+                    intersect(current->child[m], vol); // call diff on children
+                }
+            }
+        }
+        // now all children have their status set, prune.
+        if ((current->childcount == 8) && (current->all_child_state(Octnode::INSIDE) || current->all_child_state(Octnode::OUTSIDE)))
+        {
+            current->delete_children();
+        }
+    }
+
+    // string repr
+    std::string Octree::str() const
+    {
+        std::ostringstream o;
+        o << " Octree: ";
+        /*
     std::vector<Octnode*> nodelist;
     Octree::get_all_nodes(root, nodelist);
     std::vector<int> nodelevel(this->max_depth);
@@ -224,8 +261,8 @@ std::string Octree::str() const {
         o << "depth="<<m <<"  " << count << " nodes, " << invalidsAtLevel[m] << " invalid, surface=" << surfaceAtLevel[m] << " \n";
         ++m;
     }*/
-    return o.str();
-}
+        return o.str();
+    }
 
 } // end namespace
 // end of file octree.cpp

@@ -35,42 +35,45 @@
 #include "cube_wireframe.hpp"
 #include "gldata.hpp"
 
-namespace cutsim {
+namespace cutsim
+{
 
-/// a Cutsim stores/manipulates an Octree stock model, uses an IsoSurfaceAlgorithm
-/// algorithm to generate surface triangles, and communicates with
-/// the corresponding GLData surface which is used for rendering
-/// 
-/// the stock is modified using boolean operations:
-/// - sum / union
-/// - subtract / difference
-/// - product / intersection
-///
-/// after a boolean operation, calling updateGL() will update the graphics object
-///
-class Cutsim  {
-    
-public:
-    /// create a cutting simulation
-    /// \param octree_size side length of the depth=0 octree cube
-    /// \param octree_max_depth maximum sub-division depth of the octree
-    ///        each linear dimension (xyz) will potentially be divided into
-    ///        smaller cubes, with a minimum side-length of octree_size/pow(2,max_depth)
-    ///        in practice max_depth= 6 or 7 works for testing, and 9 or 10 looks very smooth (but is slower)
-    /// \param gld the GLData used to draw the stock
-    Cutsim(double octree_size, unsigned int octree_max_depth, GLData* gld, IsoSurfaceAlgorithm* iso);
-    virtual ~Cutsim();
-    void diff_volume( const Volume* vol );       ///< subtract/diff given Volume
-    void sum_volume( const Volume* vol );        ///< sum/union given Volume
-    void intersect_volume( const Volume* vol );  ///< intersect/"and" given Volume
-    void updateGL();                             ///< update the GL-data
+    /// a Cutsim stores/manipulates an Octree stock model, uses an IsoSurfaceAlgorithm
+    /// algorithm to generate surface triangles, and communicates with
+    /// the corresponding GLData surface which is used for rendering
+    ///
+    /// the stock is modified using boolean operations:
+    /// - sum / union
+    /// - subtract / difference
+    /// - product / intersection
+    ///
+    /// after a boolean operation, calling updateGL() will update the graphics object
+    ///
+    class Cutsim
+    {
 
-    void init(unsigned int n);
-    std::string str() const;
-private:
-    IsoSurfaceAlgorithm* iso_algo; // the isosurface-extraction algorithm to use
-    Octree* tree; // this is the stock model
-    GLData* g; // this is the graphics object, for rendering
-};
+    public:
+        /// create a cutting simulation
+        /// \param octree_size side length of the depth=0 octree cube
+        /// \param octree_max_depth maximum sub-division depth of the octree
+        ///        each linear dimension (xyz) will potentially be divided into
+        ///        smaller cubes, with a minimum side-length of octree_size/pow(2,max_depth)
+        ///        in practice max_depth= 6 or 7 works for testing, and 9 or 10 looks very smooth (but is slower)
+        /// \param gld the GLData used to draw the stock
+        Cutsim(double octree_size, unsigned int octree_max_depth, GLData *gld, IsoSurfaceAlgorithm *iso);
+        virtual ~Cutsim();
+        void diff_volume(const Volume *vol);      ///< subtract/diff given Volume
+        void sum_volume(const Volume *vol);       ///< sum/union given Volume
+        void intersect_volume(const Volume *vol); ///< intersect/"and" given Volume
+        void updateGL();                          ///< update the GL-data
+
+        void init(unsigned int n);
+        std::string str() const;
+
+    private:
+        IsoSurfaceAlgorithm *iso_algo; // the isosurface-extraction algorithm to use
+        Octree *tree;                  // this is the stock model
+        GLData *g;                     // this is the graphics object, for rendering
+    };
 
 } // end Cutsim namespace

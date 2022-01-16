@@ -26,53 +26,55 @@
 #include "bbox.hpp"
 #include "gldata.hpp"
 
-namespace cutsim {
+namespace cutsim
+{
 
-class Octnode;
-class Volume;
+    class Octnode;
+    class Volume;
 
-/// Octree class for cutting simulation
-/// see http://en.wikipedia.org/wiki/Octree
-///
-/// The root node is divided into eight sub-octants, and each sub-octant
-/// is recursively further divided into octants.
-///
-/// The side-length of the root node is root_scale
-/// The dept of the root node is zero.
-/// Subdivision is continued unti max_depth is reached.
-/// A node at tree-dept n is a cube with side-length root_scale/pow(2,n)
-///
-/// This class stores the root Octnode and allows operations on the tree
-///
-class Octree {
+    /// Octree class for cutting simulation
+    /// see http://en.wikipedia.org/wiki/Octree
+    ///
+    /// The root node is divided into eight sub-octants, and each sub-octant
+    /// is recursively further divided into octants.
+    ///
+    /// The side-length of the root node is root_scale
+    /// The dept of the root node is zero.
+    /// Subdivision is continued unti max_depth is reached.
+    /// A node at tree-dept n is a cube with side-length root_scale/pow(2,n)
+    ///
+    /// This class stores the root Octnode and allows operations on the tree
+    ///
+    class Octree
+    {
     public:
         /// create an octree with a root node with scale=root_scale, maximum
         /// tree-depth of max_depth and centered at centerp.
-        Octree(double root_scale, unsigned int max_depth, GLVertex& centerPoint, GLData* gl);
+        Octree(double root_scale, unsigned int max_depth, GLVertex &centerPoint, GLData *gl);
         virtual ~Octree();
-        
-    // bolean operations on tree
+
+        // bolean operations on tree
         /// diff given Volume from tree
-        void diff(const Volume* vol) { diff( this->root, vol); }
+        void diff(const Volume *vol) { diff(this->root, vol); }
         /// sum given Volume to tree
-        void sum(const Volume* vol) { sum( this->root, vol); }
+        void sum(const Volume *vol) { sum(this->root, vol); }
         /// intersect tree with given Volume
-        void intersect(const Volume* vol) { intersect( this->root, vol); }
-        
+        void intersect(const Volume *vol) { intersect(this->root, vol); }
+
         // debug, can be removed?
         // put all leaf-nodes in a list
         //void get_leaf_nodes( std::vector<Octnode*>& nodelist) const { get_leaf_nodes( root,  nodelist); }
-        
+
         /// put all leaf-nodes in a list
-        void get_leaf_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const;
-        
+        void get_leaf_nodes(Octnode *current, std::vector<Octnode *> &nodelist) const;
+
         // put all invalid nodes in a list
         //void get_invalid_leaf_nodes(std::vector<Octnode*>& nodelist) const;
         // put all invalid nodes in a list
         //void get_invalid_leaf_nodes( Octnode* current, std::vector<Octnode*>& nodelist) const;
         // put all nodes in a list
         //void get_all_nodes(Octnode* current, std::vector<Octnode*>& nodelist) const;
-        
+
         /// initialize by recursively calling subdivide() on all nodes n times
         void init(const unsigned int n);
         /// return max depth
@@ -92,24 +94,23 @@ class Octree {
         /// the maximum tree-depth
         unsigned int max_depth;
         /// pointer to the root node
-        Octnode* root;
-        
+        Octnode *root;
+
     protected:
         /// recursively traverse the tree subtracting Volume
-        void diff(Octnode* current, const Volume* vol);
+        void diff(Octnode *current, const Volume *vol);
         /// union Octnode with Volume
-        void sum(Octnode* current, const Volume* vol);
+        void sum(Octnode *current, const Volume *vol);
         /// intersect Octnode with Volume
-        void intersect(Octnode* current, const Volume* vol);
-        
+        void intersect(Octnode *current, const Volume *vol);
 
-    // DATA
+        // DATA
         /// the GLData used to draw this tree
-        GLData* g;
+        GLData *g;
+
     private:
-        Octree() {  } // disable constructor
-        
-};
+        Octree() {} // disable constructor
+    };
 
 } // end namespace
 

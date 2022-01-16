@@ -21,38 +21,40 @@
 
 #include "glvertex.hpp"
 
-namespace cutsim {
+namespace cutsim
+{
 
-/// axis-aligned bounding-box, stores max and min (x,y,z) coordinates
-/// as GLVertex minpt and GLVertex maxpt and provides methods for clearing and setting these
-///
-/// used for rapid overlap-checking of Vola ume with an Octnode
-class Bbox {
-public:
-    Bbox();
-    /// create box 
-    Bbox(double minx, double maxx, double miny, double maxy, double minz, double maxz);
-    virtual ~Bbox() {};
+    /// axis-aligned bounding-box, stores max and min (x,y,z) coordinates
+    /// as GLVertex minpt and GLVertex maxpt and provides methods for clearing and setting these
+    ///
+    /// used for rapid overlap-checking of Vola ume with an Octnode
+    class Bbox
+    {
+    public:
+        Bbox();
+        /// create box
+        Bbox(double minx, double maxx, double miny, double maxy, double minz, double maxz);
+        virtual ~Bbox(){};
 
-    /// return true if *this overlaps Bbox b
-    bool overlaps(const Bbox& other) const;
-    
-    
-    /// reset the Bbox (sets initialized=false)
-    void clear();
-    /// Add a Point to the Bbox.
-    /// This enlarges the Bbox so that p is contained within it.
-    void addPoint(const GLVertex& p);
+        /// return true if *this overlaps Bbox b
+        bool overlaps(const Bbox &other) const;
 
-//DATA
-    /// the maximum point
-    GLVertex maxpt; 
-    /// the minimum point
-    GLVertex minpt; 
-private:
-    /// false until one Point or one Triangle has been added
-    bool initialized;
-};
+        /// reset the Bbox (sets initialized=false)
+        void clear();
+        /// Add a Point to the Bbox.
+        /// This enlarges the Bbox so that p is contained within it.
+        void addPoint(const GLVertex &p);
+
+        //DATA
+        /// the maximum point
+        GLVertex maxpt;
+        /// the minimum point
+        GLVertex minpt;
+
+    private:
+        /// false until one Point or one Triangle has been added
+        bool initialized;
+    };
 
 } // end namespace
 

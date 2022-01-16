@@ -20,14 +20,12 @@
 #ifndef FILEIO_H
 #define FILEIO_H
 
+#include <vector>
+
 #include "facet.hpp"
 #include "glvertex.hpp"
 
-#include <vector>
-#include <fstream>
-#include <filesystem>
-#include <iostream>
-#include <sstream>
+
 
 namespace cutsim {
 
@@ -40,7 +38,6 @@ class FileIO {
     bool loadMesh(boost::python::list);
     std::vector<Facet*> getFacets();
     std::string writeStl(std::vector<unsigned int> indexArray, std::vector<GLVertex> vertexArray, boost::python::str fPath, bool binary);
-
 
    private:
     GLVertex parseStlData(std::ifstream&);

@@ -30,33 +30,36 @@
 #include "octnode.hpp"
 #include "gldata.hpp"
 
-namespace cutsim {
+namespace cutsim
+{
 
-/// Marching-cubes isosurface extraction from distance field stored in Octree
-/// see http://en.wikipedia.org/wiki/Marching_cubes
-///
-class MarchingCubes : public IsoSurfaceAlgorithm {
-public:
-    MarchingCubes() : IsoSurfaceAlgorithm() {}
-    virtual void set_polyVerts(unsigned int ) { g->setTriangles(); }
-    virtual ~MarchingCubes() { }
-protected:
-    void updateGL(Octnode* node);
-    /// run MC algorithm and create triangles for given node
-    void mc_node(Octnode* node); 
-    /// based on the f[] values, generate a list of interpolated vertices, 
-    /// all on the cube-edges of the node.
-    /// These vertices are later used for defining triangles.
-    std::vector<GLVertex> interpolated_vertices(const Octnode* node, unsigned int edges) ;
-    GLVertex interpolate(const Octnode* node, int idx1, int idx2);
-// DATA
-    /// get table-index based on the funcion values (positive or negative) at the corners
-    unsigned int mc_edgeTableIndex(const Octnode* node);
-    /// Marching-Cubes edge table
-    static const unsigned int edgeTable[256];
-    /// Marching-Cubes triangle table
-    static const int triTable[256][16]; 
-};
+    /// Marching-cubes isosurface extraction from distance field stored in Octree
+    /// see http://en.wikipedia.org/wiki/Marching_cubes
+    ///
+    class MarchingCubes : public IsoSurfaceAlgorithm
+    {
+    public:
+        MarchingCubes() : IsoSurfaceAlgorithm() {}
+        virtual void set_polyVerts(unsigned int) { g->setTriangles(); }
+        virtual ~MarchingCubes() {}
+
+    protected:
+        void updateGL(Octnode *node);
+        /// run MC algorithm and create triangles for given node
+        void mc_node(Octnode *node);
+        /// based on the f[] values, generate a list of interpolated vertices,
+        /// all on the cube-edges of the node.
+        /// These vertices are later used for defining triangles.
+        std::vector<GLVertex> interpolated_vertices(const Octnode *node, unsigned int edges);
+        GLVertex interpolate(const Octnode *node, int idx1, int idx2);
+        // DATA
+        /// get table-index based on the funcion values (positive or negative) at the corners
+        unsigned int mc_edgeTableIndex(const Octnode *node);
+        /// Marching-Cubes edge table
+        static const unsigned int edgeTable[256];
+        /// Marching-Cubes triangle table
+        static const int triTable[256][16];
+    };
 
 } // end namespace
 
