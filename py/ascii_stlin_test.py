@@ -16,7 +16,8 @@ def main():
     # define path to the stl file
     dir = os.path.dirname(__file__)
     file_name = "libcutsim_ascii_import.stl"
-    file_path = dir + os.sep + file_name
+    folder_name = "example_stl"
+    file_path = dir + os.sep + folder_name + os.sep + file_name
 
     print("Importing: ", file_path)
 
