@@ -28,6 +28,7 @@
 #include "facet.hpp"
 #include "glvertex.hpp"
 #include "gldata.hpp"
+#include "fileio.hpp"
 
 namespace cutsim {
     
@@ -143,7 +144,6 @@ class MeshVolume: public Volume {
             facets.resize(0);
         }
 
-
         void addFacet(Facet *f)	{ facets.push_back(f); }
 
         /// set the center of STL
@@ -176,11 +176,6 @@ class MeshVolume: public Volume {
         bool loadMesh(boost::python::list);
         // load mesh from stl file
         bool loadStl(boost::python::str);
-
-        GLVertex parseStlData(std::ifstream&);
-        GLVertex parseStlLine(std::string, std::string);
-
-       // int readStlFile(QString file) {  int retval = Stl::readStlFile(file); calcBB(); return retval; }
 
     private:
         // V21[i] = facets[i]->v2 - facets[i]->v1
@@ -468,5 +463,4 @@ class CylMoveOCTVolume: public OCTVolume {
 
 
 } // end namespace
-
 // end file volume.hpp

@@ -56,6 +56,7 @@ MESSAGE(STATUS "CMAKE_SOURCE_DIR = " ${CMAKE_SOURCE_DIR} )
 
 set( CUTSIM_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/volume.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fileio.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/marching_cubes.cpp
@@ -66,6 +67,7 @@ set( CUTSIM_SRC
 
 set( CUTSIM_INCLUDE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/facet.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fileio.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octnode.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octree.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/volume.hpp
