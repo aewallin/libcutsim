@@ -38,13 +38,13 @@ if (True):
     ymax = 100
 
     while y < ymax:
-        print("y value:", y)
+        # print("y value:", y)
         y = y + stepSize
         cutter.setCenter(x,y,12.0)
         cs.diff_volume(cutter) # subtract the volume from the stock
     t_after = time.time()
     
-    print(ymax / stepSize, " diff() calls took ", t_after-t_before," seconds")
+    # print(ymax / stepSize, " diff() calls took ", t_after-t_before," seconds")
     cs.updateGL()
 
 '''
@@ -60,8 +60,23 @@ myscreen.iren.Start()
 '''
 
 # generate an stl file
-dir = os.path.dirname(__file__)
+folder_name = "stl_out"
+dir = os.path.dirname(__file__) + os.sep + folder_name
+
+if not os.path.exists(dir):
+    os.mkdir(dir)
+
 file_name = "libcutsim.stl"
 file_path = dir + os.sep + file_name
+
+#delete existing file
+if os.path.exists(file_path):
+    os.remove(file_path)
+
 stl_file_path = gl.get_stl(file_path, True)  # second parameter True for binary stl, False for assci
-print("stl file written:", stl_file_path)
+
+if os.path.exists(stl_file_path):
+    print("stl file written:", stl_file_path)
+    print("stl file size (bytes):", os.path.getsize(stl_file_path))
+else:
+    print("Error: stl file creation failed at requested path:", stl_file_path)
