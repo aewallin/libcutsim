@@ -17,17 +17,17 @@
  *  along with libcutsim.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <fstream>
+//#include <fstream>
 #include <filesystem>
-#include <iostream>
-#include <sstream>
+//#include <iostream>
+//#include <sstream>
 #include <cassert>
 #include <set>
 #include <vector>
 
-
 #include "gldata.hpp"
 #include "octnode.hpp"
+#include "fileio.hpp"
 
 namespace cutsim {
 
@@ -142,101 +142,13 @@ std::string GLData::str() {
     return s;
 }
 
+
 /// export stl file and return the path to python
 boost::python::str GLData::get_stl(boost::python::str fPath, bool binary = true) {
-    
-    boost::python::str out;
-    std::ofstream stlFile;
-
-    std::string filePath = boost::python::extract<std::string>(fPath);
-
-    /// make sure the last charater isn't a seperator
-    std::string lastchar = filePath.substr(filePath.length() - 1);
-    if (boost::algorithm::contains(lastchar,"\\") || boost::algorithm::contains(lastchar,"/") ){
-        filePath = filePath + "libcutsim.stl";
-    }
-
-    /// check for a .stl file extension
-    std::string ext = filePath.substr(filePath.length() - 4);
-    boost::algorithm::to_lower(ext);
-
-    if ( ext != ".stl") {
-        filePath = filePath + ".stl";
-    }
-
-    /// split the filename from the path name and check the path exists
-    std::size_t pos = filePath.find_last_of("/\\");
-    std::string path = filePath.substr(0, pos);
-
-    if (!std::filesystem::exists(path)){
-        std::filesystem::create_directory(path);
-    }
-
-    if (binary){
-
-        stlFile.open(filePath.c_str(),  std::ios::out | std::ios::binary);
-        std::string header_info = "output";
-        char head[81];
-        std::strncpy(head, header_info.c_str(), 81);
-        unsigned long len = indexArray.size() / 3;
-        
-        stlFile.write(head, 80);
-        stlFile.write((char*)&len, 4);
-
-    }else{
-        stlFile.open(filePath.c_str());
-        stlFile << "solid libcutsim" << std::endl;
-    }
-
-    for (unsigned int n=0;n<indexArray.size();n+=3) {
-
-        GLVertex p1 = vertexArray[n];
-        GLVertex p2 = vertexArray[n+1];
-        GLVertex p3 = vertexArray[n+2];
-
-        if(binary){
-            //normal coordinates
-            stlFile.write((char*)&p1.nx, sizeof(p1.nx));
-            stlFile.write((char*)&p1.ny, sizeof(p1.ny));
-            stlFile.write((char*)&p1.nz, sizeof(p1.nz));
-
-            //p1 coordinates
-            stlFile.write((char*)&p1.x, sizeof(p1.x));
-            stlFile.write((char*)&p1.y, sizeof(p1.y));
-            stlFile.write((char*)&p1.z, sizeof(p1.z));
-
-            //p2 coordinates
-            stlFile.write((char*)&p2.x, sizeof(p2.x));
-            stlFile.write((char*)&p2.y, sizeof(p2.y));
-            stlFile.write((char*)&p2.z, sizeof(p2.z));
-
-            //p3 coordinates
-            stlFile.write((char*)&p3.x, sizeof(p3.x));
-            stlFile.write((char*)&p3.y, sizeof(p3.y));
-            stlFile.write((char*)&p3.z, sizeof(p3.z));
-
-            char attribute[2] = "0";
-            stlFile.write(attribute,sizeof(attribute));
-
-        }else{
-
-            stlFile << "facet normal " << p1.nx << " " << p1.ny << " " << p1.nz << std::endl;
-            stlFile << "  outer loop" << std::endl;
-            stlFile << "      vertex " << p1.x << " " << p1.y << " " << p1.z << std::endl;
-            stlFile << "      vertex " << p2.x << " " << p2.y << " " << p2.z << std::endl;
-            stlFile << "      vertex " << p3.x << " " << p3.y << " " << p3.z << std::endl;
-            stlFile << "  endloop" << std::endl;
-            stlFile << "endfacet" << std::endl;
-            
-        }
-    }
-
-    if(!binary){
-        stlFile << "endsolid libcutsim" << std::endl;
-    }
-
-    stlFile.close();
-    return boost::python::str(filePath);
+    FileIO stl;
+	std::string filePath;
+    filePath = stl.writeStl(indexArray, vertexArray, fPath, binary);
+	return boost::python::str(filePath);
 }
 
 } // end cutsim namespace
