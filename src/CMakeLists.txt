@@ -13,6 +13,7 @@ if (CMAKE_BUILD_TOOL MATCHES "make")
     MESSAGE(STATUS "setting gcc options: -Wall -Werror -Wno-deprecated -pedantic-errors")
     add_definitions(-Wall  -Wno-deprecated -Werror -pedantic-errors -Wno-error=multichar )
     add_definitions(-fPIC)
+    add_definitions(-std=c++17) 
 endif (CMAKE_BUILD_TOOL MATCHES "make")
 
 option(BUILD_TYPE
@@ -55,6 +56,7 @@ MESSAGE(STATUS "CMAKE_SOURCE_DIR = " ${CMAKE_SOURCE_DIR} )
 
 set( CUTSIM_SRC
     ${CMAKE_CURRENT_SOURCE_DIR}/volume.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fileio.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octnode.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octree.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/marching_cubes.cpp
@@ -64,6 +66,8 @@ set( CUTSIM_SRC
 )
 
 set( CUTSIM_INCLUDE_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/facet.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/fileio.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octnode.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/octree.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/volume.hpp

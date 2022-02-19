@@ -1,5 +1,7 @@
 import os
 import libcutsim
+
+# Test export / outputting of the GLData to an STL file
     
 def main():
     gl = libcutsim.GLData()  # this class holds lines, triangles, or quads for OpenGL drawing

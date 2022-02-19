@@ -16,8 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with libcutsim.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
- 
+
 #pragma once
 
 #include <cassert>
@@ -27,35 +26,37 @@
 #include "octree.hpp"
 #include "octnode.hpp"
 
-namespace cutsim {
+namespace cutsim
+{
 
-/// abstract base class for isosurface extraction algorithms
-/// 
-/// isosurface algorithms produce vertices and polygons based on an Octree.
-/// Vertices and polygons are added to a GLData using addVertex, addPolygon, etc.
-///
-class IsoSurfaceAlgorithm {
-public:
-    /// create algorithm wich writes to given GLData and reads from given Octree
-    IsoSurfaceAlgorithm()  {}
-    virtual ~IsoSurfaceAlgorithm() {}
-    void set_gl(GLData* gl) { g = gl; }
-    void set_tree(Octree* tr) {tree = tr;}
-    virtual void set_polyVerts() {} ///< set vertices per polygon (2, 3, or 4)
-    /// update GLData
-    virtual void updateGL() { updateGL( tree->root ); }
-protected:
-    /// update the GLData for the given Octnode. re-implement in sub-class
-    virtual void updateGL( Octnode* node) {}
-    
-// DATA
-    int update_calls;  ///< how many updateGL calls were made? for debug
-    int valid_count;   ///< how many valid nodes? for debug
+    /// abstract base class for isosurface extraction algorithms
+    ///
+    /// isosurface algorithms produce vertices and polygons based on an Octree.
+    /// Vertices and polygons are added to a GLData using addVertex, addPolygon, etc.
+    ///
+    class IsoSurfaceAlgorithm
+    {
+    public:
+        /// create algorithm wich writes to given GLData and reads from given Octree
+        IsoSurfaceAlgorithm() {}
+        virtual ~IsoSurfaceAlgorithm() {}
+        void set_gl(GLData *gl) { g = gl; }
+        void set_tree(Octree *tr) { tree = tr; }
+        virtual void set_polyVerts() {} ///< set vertices per polygon (2, 3, or 4)
+        /// update GLData
+        virtual void updateGL() { updateGL(tree->root); }
 
-    GLData* g;     ///< the GLData to which we udpate vertices/polygons
-    Octree* tree;  ///< the Octree which we traverse to update GLData
-};
+    protected:
+        /// update the GLData for the given Octnode. re-implement in sub-class
+        virtual void updateGL(Octnode *node) {}
 
+        // DATA
+        int update_calls; ///< how many updateGL calls were made? for debug
+        int valid_count;  ///< how many valid nodes? for debug
+
+        GLData *g;    ///< the GLData to which we udpate vertices/polygons
+        Octree *tree; ///< the Octree which we traverse to update GLData
+    };
 
 } // end namespace
 

@@ -24,91 +24,102 @@
 
 #include "isosurface.hpp"
 
-namespace cutsim {
+namespace cutsim
+{
 
-/// simple cube wireframe display of octree
-/// inside, outside, and undecided nodes/cubes can be colored with a different color
-/// we can choose to draw only inside, outside, or undecided nodes
-///
-/// very simple algorithm, all GLData is updated every time we run updateGL (this is slow!)
-///
-class CubeWireFrame : public IsoSurfaceAlgorithm {
-public:
-    CubeWireFrame( ) : IsoSurfaceAlgorithm() {
-        //g->setLines(); // two indexes per line-segment
-        inside_color.set(1,0,0);
-        undecided_color.set(0,1,0);
-        outside_color.set(0,0,1);
-        draw_inside=true;
-        draw_outside=true;
-        draw_undecided=true;
-    }
-    virtual void set_polyVerts(unsigned int ) { g->setLines(); }
-protected:
-    Color inside_color;     ///< color for inside nodes
-    Color outside_color;    ///< color for outside nodes
-    Color undecided_color;  ///< color for undecided nodes
-    bool draw_inside;       ///< flag for drawing inside nodes
-    bool draw_outside;      ///< flag for drawing outside nodes
-    bool draw_undecided;    ///< flag for drawing undecided nodes
+    /// simple cube wireframe display of octree
+    /// inside, outside, and undecided nodes/cubes can be colored with a different color
+    /// we can choose to draw only inside, outside, or undecided nodes
+    ///
+    /// very simple algorithm, all GLData is updated every time we run updateGL (this is slow!)
+    ///
+    class CubeWireFrame : public IsoSurfaceAlgorithm
+    {
+    public:
+        CubeWireFrame() : IsoSurfaceAlgorithm()
+        {
+            //g->setLines(); // two indexes per line-segment
+            inside_color.set(1, 0, 0);
+            undecided_color.set(0, 1, 0);
+            outside_color.set(0, 0, 1);
+            draw_inside = true;
+            draw_outside = true;
+            draw_undecided = true;
+        }
+        virtual void set_polyVerts(unsigned int) { g->setLines(); }
 
-    // traverse tree and add/remove gl-elements to GLData
-    void updateGL( Octnode* node) {
-        if (node->valid()) {
-            valid_count++;
-            return;
-        } else if ( !node->valid() ) {
-            update_calls++;
-            node->clearVertexSet(); // remove all previous GLData
-            
-            // add lines corresponding to the cube.
-            // cube image: http://paulbourke.net/geometry/polygonise/
-            const int segTable[12][2] = { 
-                {0, 1},{1, 2},{2, 3},{3, 0},
-                {4, 5},{5, 6},{6, 7},{7, 4},
-                {0, 4},{1, 5},{2, 6},{3, 7}
-            };
-            if ( (node->is_inside() && draw_inside) ||
-                 (node->is_outside() && draw_outside) ||
-                 (node->is_undecided() && draw_undecided) 
-                ) {
-                for (unsigned int i=0; i <12 ; i++ ) {
-                    std::vector< unsigned int > lineSeg;
-                    GLVertex p1 = *(node->vertex)[ segTable[i][0 ] ];
-                    GLVertex p2 = *(node->vertex)[ segTable[i][1 ] ];
-                    Color line_color = outside_color;
-                    if (node->is_outside()) {
-                        line_color = outside_color;
-                    } 
-                    if (node->is_inside()) {
-                        line_color = inside_color;
-                    } 
-                    if ( node->is_undecided() ) {
-                        line_color = undecided_color;
-                    }
-                    p1.setColor( line_color );
-                    p2.setColor( line_color );
-                        
-                    lineSeg.push_back( g->addVertex( p1, node ) );
-                    lineSeg.push_back( g->addVertex( p2, node ) );
-                    node->addIndex( lineSeg[0] ); 
-                    node->addIndex( lineSeg[1] ); 
-                    std::cout << "line " << lineSeg[0] << " - " << lineSeg[1] << "\n";
-                    g->addPolygon( lineSeg );
-                }
+    protected:
+        Color inside_color;    ///< color for inside nodes
+        Color outside_color;   ///< color for outside nodes
+        Color undecided_color; ///< color for undecided nodes
+        bool draw_inside;      ///< flag for drawing inside nodes
+        bool draw_outside;     ///< flag for drawing outside nodes
+        bool draw_undecided;   ///< flag for drawing undecided nodes
+
+        // traverse tree and add/remove gl-elements to GLData
+        void updateGL(Octnode *node)
+        {
+            if (node->valid())
+            {
+                valid_count++;
+                return;
             }
-            node->setValid();
-            
-            // current node done, now recurse into tree.
-            if ( node->childcount == 8 ) {
-                for (unsigned int m=0;m<8;m++) {
-                    //if ( !node->child[m]->valid() )
-                        updateGL( node->child[m] );
+            else if (!node->valid())
+            {
+                update_calls++;
+                node->clearVertexSet(); // remove all previous GLData
+
+                // add lines corresponding to the cube.
+                // cube image: http://paulbourke.net/geometry/polygonise/
+                const int segTable[12][2] = {
+                    {0, 1}, {1, 2}, {2, 3}, {3, 0}, {4, 5}, {5, 6}, {6, 7}, {7, 4}, {0, 4}, {1, 5}, {2, 6}, {3, 7}};
+                if ((node->is_inside() && draw_inside) ||
+                    (node->is_outside() && draw_outside) ||
+                    (node->is_undecided() && draw_undecided))
+                {
+                    for (unsigned int i = 0; i < 12; i++)
+                    {
+                        std::vector<unsigned int> lineSeg;
+                        GLVertex p1 = *(node->vertex)[segTable[i][0]];
+                        GLVertex p2 = *(node->vertex)[segTable[i][1]];
+                        Color line_color = outside_color;
+                        if (node->is_outside())
+                        {
+                            line_color = outside_color;
+                        }
+                        if (node->is_inside())
+                        {
+                            line_color = inside_color;
+                        }
+                        if (node->is_undecided())
+                        {
+                            line_color = undecided_color;
+                        }
+                        p1.setColor(line_color);
+                        p2.setColor(line_color);
+
+                        lineSeg.push_back(g->addVertex(p1, node));
+                        lineSeg.push_back(g->addVertex(p2, node));
+                        node->addIndex(lineSeg[0]);
+                        node->addIndex(lineSeg[1]);
+                        std::cout << "line " << lineSeg[0] << " - " << lineSeg[1] << "\n";
+                        g->addPolygon(lineSeg);
+                    }
+                }
+                node->setValid();
+
+                // current node done, now recurse into tree.
+                if (node->childcount == 8)
+                {
+                    for (unsigned int m = 0; m < 8; m++)
+                    {
+                        //if ( !node->child[m]->valid() )
+                        updateGL(node->child[m]);
+                    }
                 }
             }
         }
-    }
-        
+
         /*
         std::vector< std::vector< GLVertex > > polygonize_node(const Octnode* node) {
             assert( node->childcount == 0 ); // don't call this on non-leafs!
@@ -160,7 +171,7 @@ protected:
             }
             return triangles;
         }*/
-};
+    };
 
 } // end namespace
 
